@@ -1,5 +1,5 @@
 ﻿@page "/login"
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveAuto
 @using System.ComponentModel.DataAnnotations
 @using System.Net.Http.Json
 @inject HttpClient Http
@@ -141,9 +141,9 @@
                 ErrorMessage = "Invalid email or password. Try with an email containing 'demo' for sample demo.";
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            ErrorMessage = $"An error occurred: {ex.Message}";
+            ErrorMessage = "An unexpected error occurred. Please try again later.";
         }
         finally
         {

@@ -1,0 +1,472 @@
+@page "/"
+@rendermode InteractiveAuto
+
+<PageTitle>Home — Blocks Platform</PageTitle>
+
+<div class="min-h-screen bg-white">
+
+    @* ───── Navigation ───── *@
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-linear-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900 tracking-tight">Blocks</span>
+                </div>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Features</a>
+                    <a href="#stats" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Results</a>
+                    <a href="#testimonials" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Testimonials</a>
+                    <a href="#pricing" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="/auth/login" class="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">Sign in</a>
+                    <a href="/auth/login" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-linear-to-r from-teal-500 to-cyan-600 rounded-lg shadow-sm hover:from-teal-600 hover:to-cyan-700 transition-all duration-200 hover:shadow-md">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    @* ───── Hero Section ───── *@
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+        <div class="absolute inset-0 bg-linear-to-br from-teal-50 via-white to-cyan-50"></div>
+        <div class="absolute top-20 left-1/4 w-96 h-96 bg-teal-200/30 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-10 right-1/4 w-80 h-80 bg-cyan-200/20 rounded-full blur-3xl"></div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-teal-50 border border-teal-200 rounded-full text-sm font-medium text-teal-700 mb-8">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                    </span>
+                    Now available — Enterprise Platform v3.0
+                </div>
+
+                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.1]">
+                    Build faster with
+                    <span class="bg-linear-to-r from-teal-500 to-cyan-600 bg-clip-text text-transparent">enterprise-grade</span>
+                    infrastructure
+                </h1>
+
+                <p class="mt-8 text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    Accelerate development with secure identity, data management, AI services, and real-time communication — all in one unified platform.
+                </p>
+
+                <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="/auth/login" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-white bg-linear-to-r from-teal-500 to-cyan-600 rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/30 hover:from-teal-600 hover:to-cyan-700 transition-all duration-300">
+                        Start building for free
+                        <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </a>
+                    <a href="#features" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
+                        <svg class="mr-2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Watch demo
+                    </a>
+                </div>
+
+                <div class="mt-12 flex items-center justify-center gap-8 text-sm text-gray-500">
+                    <div class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        No credit card required
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        14-day free trial
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        SOC 2 compliant
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ───── Trusted By / Logo Cloud ───── *@
+    <section class="py-16 bg-gray-50/50 border-y border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-sm font-medium text-gray-400 uppercase tracking-widest mb-10">Trusted by innovative teams worldwide</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center justify-items-center opacity-50">
+                @foreach (var company in _trustedCompanies)
+                {
+                    <div class="text-gray-400 font-bold text-lg tracking-wide">@company</div>
+                }
+            </div>
+        </div>
+    </section>
+
+    @* ───── Features Grid ───── *@
+    <section id="features" class="py-24 lg:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <p class="text-sm font-semibold text-teal-600 uppercase tracking-widest mb-3">Capabilities</p>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight">
+                    Everything you need to ship faster
+                </h2>
+                <p class="mt-5 text-lg text-gray-600">
+                    A complete platform that handles the complexity so your team can focus on building what matters.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach (var feature in _features)
+                {
+                    <div class="group relative p-8 bg-white rounded-2xl border border-gray-100 hover:border-teal-200 hover:shadow-xl hover:shadow-teal-500/5 transition-all duration-300">
+                        <div class="w-12 h-12 rounded-xl bg-linear-to-br @feature.GradientClasses flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                            @((MarkupString)feature.Icon)
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">@feature.Title</h3>
+                        <p class="text-gray-600 leading-relaxed">@feature.Description</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    @* ───── Stats Section ───── *@
+    <section id="stats" class="py-24 bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <p class="text-sm font-semibold text-teal-400 uppercase tracking-widest mb-3">By the numbers</p>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                    Trusted by thousands of developers
+                </h2>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                @foreach (var stat in _stats)
+                {
+                    <div class="text-center p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                        <div class="text-4xl sm:text-5xl font-extrabold bg-linear-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                            @stat.Value
+                        </div>
+                        <div class="mt-2 text-sm font-medium text-gray-400">@stat.Label</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    @* ───── Feature Highlight ───── *@
+    <section class="py-24 lg:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <p class="text-sm font-semibold text-teal-600 uppercase tracking-widest mb-3">Developer Experience</p>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+                        Ship features, not infrastructure
+                    </h2>
+                    <p class="mt-5 text-lg text-gray-600 leading-relaxed">
+                        Stop re-building auth, data layers, and notification systems. Blocks provides production-ready services out of the box so you can focus on your unique business logic.
+                    </p>
+                    <ul class="mt-8 space-y-4">
+                        @foreach (var item in _highlightItems)
+                        {
+                            <li class="flex items-start gap-3">
+                                <div class="shrink-0 w-6 h-6 rounded-full bg-teal-100 flex items-center justify-center mt-0.5">
+                                    <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span class="text-gray-700">@item</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="relative">
+                    <div class="absolute inset-0 bg-linear-to-br from-teal-100 to-cyan-100 rounded-3xl transform rotate-3"></div>
+                    <div class="relative bg-gray-900 rounded-2xl p-6 shadow-2xl">
+                        <div class="flex items-center gap-2 mb-4">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                        </div>
+                        <pre class="text-sm text-gray-300 font-mono overflow-x-auto"><code><span class="text-teal-400">@@inject</span> IBlocksClient Blocks
+
+<span class="text-gray-500">// Query data with GraphQL</span>
+<span class="text-cyan-400">var</span> result = <span class="text-cyan-400">await</span> Blocks.Data
+    .Query(<span class="text-amber-300">"products"</span>)
+    .Select(<span class="text-amber-300">"name"</span>, <span class="text-amber-300">"price"</span>)
+    .Where(p => p.Price > <span class="text-purple-400">100</span>)
+    .ExecuteAsync();
+
+<span class="text-gray-500">// Send notification</span>
+<span class="text-cyan-400">await</span> Blocks.Notify
+    .Send(<span class="text-amber-300">"order-confirmed"</span>, user);</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ───── Testimonials ───── *@
+    <section id="testimonials" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <p class="text-sm font-semibold text-teal-600 uppercase tracking-widest mb-3">Testimonials</p>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+                    Loved by engineering teams
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                @foreach (var testimonial in _testimonials)
+                {
+                    <div class="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div class="flex items-center gap-1 mb-4">
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                            }
+                        </div>
+                        <p class="text-gray-700 leading-relaxed mb-6">"@testimonial.Quote"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-linear-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-white font-semibold text-sm">
+                                @testimonial.Initials
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-900 text-sm">@testimonial.Name</div>
+                                <div class="text-gray-500 text-sm">@testimonial.Role</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    @* ───── Pricing Preview ───── *@
+    <section id="pricing" class="py-24 lg:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <p class="text-sm font-semibold text-teal-600 uppercase tracking-widest mb-3">Pricing</p>
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+                    Simple, transparent pricing
+                </h2>
+                <p class="mt-5 text-lg text-gray-600">Start free. Scale as you grow.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                @foreach (var plan in _plans)
+                {
+                    <div class="relative p-8 bg-white rounded-2xl border @(plan.IsPopular ? "border-teal-300 shadow-xl shadow-teal-500/10 ring-1 ring-teal-200" : "border-gray-200") transition-shadow duration-300">
+                        @if (plan.IsPopular)
+                        {
+                            <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-linear-to-r from-teal-500 to-cyan-600 text-white text-xs font-semibold rounded-full shadow-lg">
+                                Most Popular
+                            </div>
+                        }
+                        <h3 class="text-lg font-semibold text-gray-900">@plan.Name</h3>
+                        <div class="mt-4 flex items-baseline gap-1">
+                            <span class="text-4xl font-extrabold text-gray-900">@plan.Price</span>
+                            @if (!string.IsNullOrEmpty(plan.Period))
+                            {
+                                <span class="text-gray-500 text-sm">@plan.Period</span>
+                            }
+                        </div>
+                        <p class="mt-3 text-sm text-gray-500">@plan.Description</p>
+                        <ul class="mt-8 space-y-3">
+                            @foreach (var item in plan.Features)
+                            {
+                                <li class="flex items-center gap-2 text-sm text-gray-700">
+                                    <svg class="w-4 h-4 text-teal-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    @item
+                                </li>
+                            }
+                        </ul>
+                        <a href="/auth/login"
+                           class="mt-8 block w-full text-center px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-200 @(plan.IsPopular ? "text-white bg-linear-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 shadow-lg shadow-teal-500/25" : "text-gray-700 bg-gray-50 border border-gray-200 hover:bg-gray-100")">
+                            @plan.ButtonText
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    @* ───── CTA Section ───── *@
+    <section class="py-24 bg-linear-to-br from-teal-600 via-teal-700 to-cyan-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
+                Ready to accelerate your development?
+            </h2>
+            <p class="mt-6 text-lg text-teal-100 max-w-2xl mx-auto">
+                Join thousands of teams building production applications on Blocks. Get started in minutes, not months.
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/auth/login" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-teal-700 bg-white rounded-xl shadow-lg hover:bg-teal-50 transition-all duration-200">
+                    Start building today
+                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </a>
+                <a href="#features" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-base font-semibold text-white border border-white/30 rounded-xl hover:bg-white/10 transition-all duration-200">
+                    Talk to sales
+                </a>
+            </div>
+        </div>
+    </section>
+
+    @* ───── Footer ───── *@
+    <footer class="bg-gray-900 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Product</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#features" class="text-sm text-gray-400 hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#pricing" class="text-sm text-gray-400 hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Changelog</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Platform</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Identity &amp; Access</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Data Management</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">AI Services</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Communication</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Company</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">About</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-sm font-semibold text-white uppercase tracking-wider mb-4">Legal</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Privacy</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Terms</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Security</a></li>
+                        <li><a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">GDPR</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-linear-to-br from-teal-500 to-cyan-600 flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                    </div>
+                    <span class="text-sm text-gray-400">&copy; @DateTime.Now.Year Blocks Platform. All rights reserved.</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+@code {
+    private readonly string[] _trustedCompanies = { "Acme Corp", "Globex", "Umbrella", "Initech", "Soylent", "Cyberdyne" };
+
+    private readonly string[] _highlightItems =
+    {
+        "GraphQL API with automatic schema generation",
+        "Built-in OIDC authentication and RBAC authorization",
+        "Real-time notifications and email templates",
+        "AI agent framework with RAG and tool support",
+        "One-click deploy with Docker containers"
+    };
+
+    private record FeatureItem(string Title, string Description, string GradientClasses, string Icon);
+    private record StatItem(string Value, string Label);
+    private record TestimonialItem(string Quote, string Name, string Role, string Initials);
+    private record PlanItem(string Name, string Price, string? Period, string Description, string ButtonText, bool IsPopular, string[] Features);
+
+    private readonly FeatureItem[] _features =
+    {
+        new("Identity & Access", "Enterprise SSO, MFA, RBAC, and session management with zero custom auth code.",
+            "from-blue-500 to-indigo-600",
+            "<svg class=\"w-6 h-6 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z\" /></svg>"),
+
+        new("Data Management", "Define schemas, query with GraphQL, upload files, and set field-level access policies.",
+            "from-teal-500 to-emerald-600",
+            "<svg class=\"w-6 h-6 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4\" /></svg>"),
+
+        new("AI Services", "Build agents, configure RAG pipelines, and integrate LLMs with tool-calling support.",
+            "from-purple-500 to-pink-600",
+            "<svg class=\"w-6 h-6 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z\" /></svg>"),
+
+        new("Communication", "Send templated emails, push notifications, and in-app messages with delivery tracking.",
+            "from-amber-500 to-orange-600",
+            "<svg class=\"w-6 h-6 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z\" /></svg>"),
+
+        new("Logs & Monitoring", "Distributed tracing, structured logs, API performance metrics, and real-time alerts.",
+            "from-rose-500 to-red-600",
+            "<svg class=\"w-6 h-6 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z\" /></svg>"),
+
+        new("Localization", "Multi-language support with AI-powered translation and import/export workflows.",
+            "from-cyan-500 to-sky-600",
+            "<svg class=\"w-6 h-6 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129\" /></svg>")
+    };
+
+    private readonly StatItem[] _stats =
+    {
+        new("10K+", "Active developers"),
+        new("99.99%", "Uptime SLA"),
+        new("50M+", "API calls / day"),
+        new("<80ms", "Avg. response time")
+    };
+
+    private readonly TestimonialItem[] _testimonials =
+    {
+        new("Blocks cut our development time in half. We shipped our SaaS MVP in three weeks instead of three months.",
+            "Sarah Chen", "CTO at LaunchPad", "SC"),
+        new("The built-in auth and data layer meant we could focus entirely on our business logic. Best infrastructure decision we made.",
+            "Marcus Rivera", "Lead Engineer at Flowstate", "MR"),
+        new("SOC 2 compliant out of the box. Our security team was thrilled. Onboarding took less than a day.",
+            "Jana Kowalski", "VP Engineering at Comply.io", "JK")
+    };
+
+    private readonly PlanItem[] _plans =
+    {
+        new("Starter", "Free", null, "For side projects and prototypes",
+            "Get started",  false,
+            new[] { "1,000 API calls/day", "3 schemas", "Community support", "Basic auth" }),
+        new("Pro", "$49", "/mo", "For growing teams shipping fast",
+            "Start free trial", true,
+            new[] { "100K API calls/day", "Unlimited schemas", "Priority support", "SSO & MFA", "AI services", "Custom domains" }),
+        new("Enterprise", "Custom", null, "For large-scale production workloads",
+            "Contact sales", false,
+            new[] { "Unlimited API calls", "Dedicated infrastructure", "24/7 support & SLA", "Advanced compliance", "Custom integrations", "On-premise option" })
+    };
+}

@@ -1,0 +1,25 @@
+{
+  "name": "blocks-construct-blazor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "css:build": "npx @tailwindcss/cli -i ./src/Server/Styles/app.tailwind.css -o ./src/Server/wwwroot/app.tailwind.css --minify",
+    "css:watch": "npx @tailwindcss/cli -i ./src/Server/Styles/app.tailwind.css -o ./src/Server/wwwroot/app.tailwind.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SELISEdigitalplatforms/blocks-construct-blazor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SELISEdigitalplatforms/blocks-construct-blazor/issues"
+  },
+  "homepage": "https://github.com/SELISEdigitalplatforms/blocks-construct-blazor#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.2",
+    "tailwindcss": "^4.2.2"
+  }
+}

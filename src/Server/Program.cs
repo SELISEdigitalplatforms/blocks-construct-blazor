@@ -1,4 +1,4 @@
-using Server.Components;
+using Server.Components.Layout;
 
 var builder = WebApplication.CreateBuilder(args);
 
