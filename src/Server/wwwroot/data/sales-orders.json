@@ -1,0 +1,99 @@
+[
+  {
+    "id": "SO-1001",
+    "customer": "Acme Corporation",
+    "contactEmail": "orders@acme.com",
+    "orderDate": "2026-01-10",
+    "shippedDate": "2026-01-14",
+    "status": "Delivered",
+    "shippingAddress": "123 Industrial Blvd, Chicago, IL 60601",
+    "items": [
+      { "productId": "P-101", "productName": "Widget A", "quantity": 10, "unitPrice": 25.00 },
+      { "productId": "P-205", "productName": "Gadget Pro", "quantity": 2, "unitPrice": 150.00 }
+    ],
+    "subtotal": 550.00,
+    "tax": 44.00,
+    "total": 594.00
+  },
+  {
+    "id": "SO-1002",
+    "customer": "Globex Industries",
+    "contactEmail": "purchasing@globex.com",
+    "orderDate": "2026-01-22",
+    "shippedDate": "2026-01-25",
+    "status": "Shipped",
+    "shippingAddress": "456 Commerce Ave, Dallas, TX 75201",
+    "items": [
+      { "productId": "P-303", "productName": "Steel Bracket Set", "quantity": 50, "unitPrice": 8.50 },
+      { "productId": "P-410", "productName": "Mounting Kit", "quantity": 50, "unitPrice": 3.00 }
+    ],
+    "subtotal": 575.00,
+    "tax": 46.00,
+    "total": 621.00
+  },
+  {
+    "id": "SO-1003",
+    "customer": "Initech Solutions",
+    "contactEmail": "supply@initech.com",
+    "orderDate": "2026-02-03",
+    "shippedDate": null,
+    "status": "Processing",
+    "shippingAddress": "789 Tech Park, Austin, TX 78701",
+    "items": [
+      { "productId": "P-512", "productName": "Server Rack Unit", "quantity": 3, "unitPrice": 899.00 },
+      { "productId": "P-601", "productName": "Cat6 Cable 100m", "quantity": 10, "unitPrice": 22.50 }
+    ],
+    "subtotal": 2922.00,
+    "tax": 233.76,
+    "total": 3155.76
+  },
+  {
+    "id": "SO-1004",
+    "customer": "Umbrella Retail Co.",
+    "contactEmail": "ops@umbrellaretail.com",
+    "orderDate": "2026-02-14",
+    "shippedDate": null,
+    "status": "Pending",
+    "shippingAddress": "321 Market Street, San Francisco, CA 94105",
+    "items": [
+      { "productId": "P-720", "productName": "Display Stand", "quantity": 5, "unitPrice": 65.00 },
+      { "productId": "P-101", "productName": "Widget A", "quantity": 20, "unitPrice": 25.00 },
+      { "productId": "P-802", "productName": "Promo Banner Roll", "quantity": 100, "unitPrice": 1.50 }
+    ],
+    "subtotal": 1000.00,
+    "tax": 80.00,
+    "total": 1080.00
+  },
+  {
+    "id": "SO-1005",
+    "customer": "Soylent Dynamics",
+    "contactEmail": "procurement@soylent.com",
+    "orderDate": "2026-02-20",
+    "shippedDate": null,
+    "status": "Cancelled",
+    "shippingAddress": "654 Harbor View, Seattle, WA 98101",
+    "items": [
+      { "productId": "P-910", "productName": "Conveyor Belt 5m", "quantity": 2, "unitPrice": 450.00 }
+    ],
+    "subtotal": 900.00,
+    "tax": 72.00,
+    "total": 972.00
+  },
+  {
+    "id": "SO-1006",
+    "customer": "Massive Dynamic",
+    "contactEmail": "logistics@massivedynamic.com",
+    "orderDate": "2026-03-01",
+    "shippedDate": "2026-03-05",
+    "status": "Delivered",
+    "shippingAddress": "1000 Innovation Way, Boston, MA 02110",
+    "items": [
+      { "productId": "P-205", "productName": "Gadget Pro", "quantity": 5, "unitPrice": 150.00 },
+      { "productId": "P-303", "productName": "Steel Bracket Set", "quantity": 30, "unitPrice": 8.50 },
+      { "productId": "P-512", "productName": "Server Rack Unit", "quantity": 1, "unitPrice": 899.00 }
+    ],
+    "subtotal": 2404.00,
+    "tax": 192.32,
+    "total": 2596.32
+  }
+]

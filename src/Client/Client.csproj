@@ -14,7 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Dashbaoard\" />
+    <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\" />
   </ItemGroup>
 
 </Project>

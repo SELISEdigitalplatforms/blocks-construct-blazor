@@ -9,11 +9,17 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Client\Client.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
+
+  <Target Name="BuildTailwindCSS" BeforeTargets="Build">
+    <Exec Command="npm run css:build" WorkingDirectory="$(MSBuildThisFileDirectory)..\.." />
+  </Target>
 
 </Project>

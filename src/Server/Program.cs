@@ -1,24 +1,19 @@
-using Server.Components;
+using Server.Components.Layout;
+using Server.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddHttpClient();
+
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
 
-builder.Services.AddScoped<HttpClient>(sp =>
-{
-    var navigationManager = sp.GetRequiredService<Microsoft.AspNetCore.Components.NavigationManager>();
-    return new HttpClient
-    {
-        BaseAddress = new Uri(navigationManager.BaseUri)
-    };
-});
+builder.Services.AddApplicationServices(builder.Environment.WebRootPath);
 
 var app = builder.Build();
 
@@ -26,7 +21,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
-
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -41,7 +35,6 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapControllers();
-
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
