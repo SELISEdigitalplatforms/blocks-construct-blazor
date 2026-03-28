@@ -1,0 +1,9 @@
+<div>
+    <p class="text-xs font-normal text-medium-emphasis">@Label</p>
+    <p class="mt-0.5 text-sm font-medium text-high-emphasis">@Value</p>
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string Value { get; set; } = "";
+}

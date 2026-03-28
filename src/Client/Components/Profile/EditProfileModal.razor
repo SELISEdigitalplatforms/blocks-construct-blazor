@@ -1,0 +1,84 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="w-full max-w-md rounded-xl bg-card p-6 shadow-xl">
+        <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-bold text-high-emphasis">Edit Profile</h2>
+            <button @onclick="OnClose" class="text-medium-emphasis hover:text-high-emphasis">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(_error))
+        {
+            <div class="mb-3 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">@_error</div>
+        }
+
+        <EditForm Model="_form" OnValidSubmit="HandleSave" class="flex flex-col gap-4">
+            <DataAnnotationsValidator />
+
+            <FormField Label="First Name" Required="true">
+                <InputText @bind-Value="_form.FirstName" class="form-input" />
+            </FormField>
+
+            <FormField Label="Last Name">
+                <InputText @bind-Value="_form.LastName" class="form-input" />
+            </FormField>
+
+            <FormField Label="Phone Number">
+                <InputText @bind-Value="_form.PhoneNumber" class="form-input" />
+            </FormField>
+
+            <div class="mt-2 flex justify-end gap-3">
+                <button type="button" @onclick="OnClose" class="rounded-md border border-border px-4 py-2 text-sm hover:bg-muted">Cancel</button>
+                <button type="submit" class="rounded-md bg-primary px-4 py-2 text-sm font-extrabold text-white hover:bg-primary/90 disabled:opacity-50" disabled="@_saving">@(_saving ? "Saving..." : "Save")</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public UserProfile Profile { get; set; } = default!;
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnSaved { get; set; }
+    [Inject] private IUserService UserService { get; set; } = default!;
+
+    private EditProfileForm _form = new();
+    private string _error = "";
+    private bool _saving;
+
+    protected override void OnParametersSet()
+    {
+        _form = new EditProfileForm
+        {
+            FirstName = Profile.FirstName,
+            LastName = Profile.LastName ?? "",
+            PhoneNumber = Profile.PhoneNumber ?? ""
+        };
+    }
+
+    private async Task HandleSave()
+    {
+        _saving = true;
+        _error = "";
+        try
+        {
+            await UserService.UpdateProfileAsync(Profile.ItemId, _form.FirstName, _form.LastName, _form.PhoneNumber);
+            await OnSaved.InvokeAsync();
+            await OnClose.InvokeAsync();
+        }
+        catch
+        {
+            _error = "Failed to save. Please try again.";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    public class EditProfileForm
+    {
+        [Required] public string FirstName { get; set; } = "";
+        public string LastName { get; set; } = "";
+        public string PhoneNumber { get; set; } = "";
+    }
+}

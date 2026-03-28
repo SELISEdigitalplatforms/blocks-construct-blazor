@@ -4,6 +4,50 @@
         <name>Server</name>
     </assembly>
     <members>
+        <member name="T:Server.Controllers.SalesOrdersController">
+            <summary>
+            Provides REST endpoints for querying sales orders.
+            </summary>
+        </member>
+        <member name="M:Server.Controllers.SalesOrdersController.#ctor(Services.SalesOrders.ISalesOrderService)">
+            <summary>
+            Creates a new controller instance.
+            </summary>
+            <param name="salesOrderService">Service used to query sales orders.</param>
+        </member>
+        <member name="M:Server.Controllers.SalesOrdersController.GetAll">
+            <summary>
+            Returns all sales orders.
+            </summary>
+            <returns>A list of sales orders.</returns>
+        </member>
+        <member name="M:Server.Controllers.SalesOrdersController.GetById(System.String)">
+            <summary>
+            Returns a single sales order by identifier.
+            </summary>
+            <param name="id">The unique order identifier.</param>
+            <returns>The matching sales order, if found.</returns>
+        </member>
+        <member name="M:Server.Controllers.SalesOrdersController.GetByStatus(System.String)">
+            <summary>
+            Returns sales orders filtered by status.
+            </summary>
+            <param name="status">The order status filter.</param>
+            <returns>A list of sales orders with the requested status.</returns>
+        </member>
+        <member name="T:Server.Extensions.ServiceExtensions">
+            <summary>
+            Registers application service dependencies.
+            </summary>
+        </member>
+        <member name="M:Server.Extensions.ServiceExtensions.AddApplicationServices(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)">
+            <summary>
+            Adds feature services used by the application.
+            </summary>
+            <param name="services">The service collection.</param>
+            <param name="webRootPath">Server web root path used by file-backed services.</param>
+            <returns>The updated service collection.</returns>
+        </member>
         <member name="T:Program">
             <summary>
             Auto-generated public partial Program class for top-level statement apps.

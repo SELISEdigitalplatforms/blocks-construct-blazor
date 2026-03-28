@@ -1,0 +1,16 @@
+@inject NavigationManager Nav
+
+@code {
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        if (!Nav.Uri.Contains("/login", StringComparison.OrdinalIgnoreCase))
+        {
+            Nav.NavigateTo("/login", replace: true);
+        }
+    }
+}

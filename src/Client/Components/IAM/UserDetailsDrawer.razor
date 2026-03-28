@@ -1,0 +1,58 @@
+<div class="fixed inset-0 z-40 bg-black/30" @onclick="OnClose"></div>
+
+<div class="animate-slide-in-right fixed right-0 top-0 z-50 flex h-full w-full max-w-sm flex-col bg-card shadow-2xl">
+    <div class="flex items-center justify-between border-b px-4 py-3">
+        <h3 class="font-semibold text-high-emphasis">User Details</h3>
+        <button @onclick="OnClose" class="rounded p-1 text-medium-emphasis hover:bg-muted">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
+
+    <div class="flex flex-1 flex-col gap-6 overflow-y-auto p-4">
+        <div class="flex items-center gap-4">
+            <div class="h-16 w-16 overflow-hidden rounded-full border shadow-sm">
+                <img src="@(User.ProfileImageUrl ?? "/images/dummy_profile.png")" alt="Profile" class="h-full w-full object-cover" onerror="this.src='/images/dummy_profile.png'" />
+            </div>
+            <div>
+                <p class="text-lg font-semibold text-high-emphasis">@User.FullName</p>
+                <p class="break-all text-sm text-medium-emphasis">@User.Email</p>
+            </div>
+        </div>
+
+        <div class="border-t"></div>
+
+        <div class="grid grid-cols-2 gap-4 text-sm">
+            <DrawerField Label="Phone" Value="@(User.PhoneNumber ?? "-")" />
+            <DrawerField Label="Roles" Value="@string.Join(", ", User.Roles)" />
+            <DrawerField Label="Status" Value="@(User.Active ? "Active" : "Inactive")" />
+            <DrawerField Label="MFA" Value="@(User.MfaEnabled ? "Enabled" : "Disabled")" />
+            <DrawerField Label="Verified" Value="@(User.IsVerified ? "Yes" : "No")" />
+            <DrawerField Label="Joined" Value="@User.CreatedDate.ToString("dd MMM yyyy")" />
+            <DrawerField Label="Last Login" Value="@(User.LastLoggedInTime?.Year > 1 ? User.LastLoggedInTime.Value.ToString("dd MMM yyyy") : "-")" />
+        </div>
+
+        <div class="border-t"></div>
+
+        <div class="flex flex-col gap-2">
+            <p class="text-xs font-semibold uppercase tracking-wider text-low-emphasis">Quick Actions</p>
+
+            <button @onclick="() => OnResetPassword.InvokeAsync(User)" class="w-full rounded-md border border-border px-3 py-2.5 text-left text-sm hover:bg-muted">
+                Send Password Reset Email
+            </button>
+
+            @if (!User.IsVerified)
+            {
+                <button @onclick="() => OnResendActivation.InvokeAsync(User)" class="w-full rounded-md border border-border px-3 py-2.5 text-left text-sm hover:bg-muted">
+                    Resend Activation Email
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public IamUser User { get; set; } = default!;
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<IamUser> OnResetPassword { get; set; }
+    [Parameter] public EventCallback<IamUser> OnResendActivation { get; set; }
+}

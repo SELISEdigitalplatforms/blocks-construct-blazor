@@ -1,0 +1,80 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="w-full max-w-md rounded-xl bg-card p-6 shadow-xl">
+        <div class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-bold text-high-emphasis">Add User</h2>
+            <button @onclick="OnClose" class="text-medium-emphasis hover:text-high-emphasis">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+
+        @if (!string.IsNullOrEmpty(_error))
+        {
+            <div class="mb-3 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">@_error</div>
+        }
+
+        <EditForm Model="_model" OnValidSubmit="HandleSubmit" class="flex flex-col gap-4">
+            <DataAnnotationsValidator />
+
+            <div class="grid grid-cols-2 gap-4">
+                <FormField Label="First Name" Required="true">
+                    <InputText @bind-Value="_model.FirstName" class="form-input" />
+                    <ValidationMessage For="@(() => _model.FirstName)" class="text-xs text-destructive" />
+                </FormField>
+                <FormField Label="Last Name">
+                    <InputText @bind-Value="_model.LastName" class="form-input" />
+                </FormField>
+            </div>
+
+            <FormField Label="Email" Required="true">
+                <InputText @bind-Value="_model.Email" class="form-input" />
+                <ValidationMessage For="@(() => _model.Email)" class="text-xs text-destructive" />
+            </FormField>
+
+            <FormField Label="Phone Number">
+                <InputText @bind-Value="_model.PhoneNumber" class="form-input" />
+            </FormField>
+
+            <FormField Label="Role">
+                <InputSelect @bind-Value="_model.Role" class="form-input">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </InputSelect>
+            </FormField>
+
+            <div class="mt-2 flex justify-end gap-3">
+                <button type="button" @onclick="OnClose" class="rounded-md border border-border px-4 py-2 text-sm hover:bg-muted">Cancel</button>
+                <button type="submit" class="rounded-md bg-primary px-4 py-2 text-sm font-extrabold text-white hover:bg-primary/90 disabled:opacity-50" disabled="@_saving">@(_saving ? "Adding..." : "Add User")</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnSaved { get; set; }
+    [Inject] private IUserService UserService { get; set; } = default!;
+
+    private AddUserRequest _model = new();
+    private string _error = "";
+    private bool _saving;
+
+    private async Task HandleSubmit()
+    {
+        _saving = true;
+        _error = "";
+        try
+        {
+            await UserService.InviteUserAsync(_model);
+            await OnSaved.InvokeAsync();
+            await OnClose.InvokeAsync();
+        }
+        catch
+        {
+            _error = "Failed to invite user. The email may already be registered.";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}

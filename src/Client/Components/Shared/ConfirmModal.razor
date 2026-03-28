@@ -1,0 +1,30 @@
+@if (IsOpen)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50" @onclick="OnBackdropClick">
+        <div class="w-full max-w-sm rounded-xl bg-card p-6 shadow-xl" @onclick:stopPropagation="true">
+            <h3 class="text-lg font-bold text-high-emphasis">@Title</h3>
+            <p class="mt-2 text-sm text-medium-emphasis">@Description</p>
+
+            <div class="mt-6 flex justify-end gap-3">
+                <button class="rounded-md border border-border px-4 py-2 text-sm text-high-emphasis hover:bg-muted" @onclick="OnCancel">
+                    Cancel
+                </button>
+                <button class="rounded-md px-4 py-2 text-sm font-extrabold @(string.IsNullOrWhiteSpace(ConfirmClass) ? "bg-primary text-white hover:bg-primary/90" : ConfirmClass)" @onclick="OnConfirm">
+                    @ConfirmLabel
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public string Title { get; set; } = "Confirm";
+    [Parameter] public string Description { get; set; } = "Are you sure?";
+    [Parameter] public string ConfirmLabel { get; set; } = "Confirm";
+    [Parameter] public string ConfirmClass { get; set; } = "";
+    [Parameter] public EventCallback OnConfirm { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private async Task OnBackdropClick() => await OnCancel.InvokeAsync();
+}

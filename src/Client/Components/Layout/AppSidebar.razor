@@ -1,0 +1,81 @@
+@inject NavigationManager Nav
+@inject SidebarState Sidebar
+@implements IDisposable
+
+@{
+    var desktopWidth = Sidebar.IsOpen ? "lg:w-56" : "lg:w-14";
+    var mobileClass = Sidebar.IsMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0";
+}
+
+<aside class="fixed inset-y-0 left-0 z-30 flex w-56 flex-col border-r bg-card transition-all duration-300 ease-in-out lg:relative lg:z-auto @desktopWidth @mobileClass">
+    <div class="flex h-14 items-center justify-between border-b px-3">
+        @if (Sidebar.IsOpen)
+        {
+            <img src="/images/logo.svg" alt="Logo" class="h-8 w-auto" />
+        }
+        else
+        {
+            <img src="/images/logo_small.svg" alt="Logo" class="mx-auto h-8 w-8" />
+        }
+
+        <button @onclick="Sidebar.Toggle" class="hidden rounded p-1 text-medium-emphasis hover:bg-muted lg:flex">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <button @onclick="Sidebar.CloseMobile" class="rounded p-1 text-medium-emphasis hover:bg-muted lg:hidden">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <nav class="flex-1 space-y-0.5 overflow-y-auto px-2 py-3">
+        @if (Sidebar.IsOpen)
+        {
+            <p class="px-2 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-wider text-low-emphasis">Cloud Integrated</p>
+        }
+        else
+        {
+            <div class="my-2 border-t border-border"></div>
+        }
+
+        <SidebarMenuItem Label="IAM" Href="/identity-management" CurrentPath="@_currentPath" IsOpen="@Sidebar.IsOpen" IconSvg="@Icons.Users" />
+        <SidebarMenuItem Label="Inventory" Href="/inventory" CurrentPath="@_currentPath" IsOpen="@Sidebar.IsOpen" IconSvg="@Icons.Store" />
+
+        <div class="my-2 border-t border-border"></div>
+
+        @if (Sidebar.IsOpen)
+        {
+            <p class="px-2 pb-2 pt-1 text-[10px] font-semibold uppercase tracking-wider text-low-emphasis">Other</p>
+        }
+
+        <SidebarMenuItem Label="Dashboard" Href="/dashboard" CurrentPath="@_currentPath" IsOpen="@Sidebar.IsOpen" IconSvg="@Icons.Dashboard" />
+        <SidebarMenuItem Label="Profile" Href="/profile" CurrentPath="@_currentPath" IsOpen="@Sidebar.IsOpen" IconSvg="@Icons.User" />
+    </nav>
+</aside>
+
+@code {
+    private string _currentPath = "";
+
+    protected override void OnInitialized()
+    {
+        _currentPath = Nav.Uri;
+        Nav.LocationChanged += OnLocationChanged;
+        Sidebar.OnChange += StateHasChanged;
+    }
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        _currentPath = e.Location;
+        Sidebar.CloseMobile();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Nav.LocationChanged -= OnLocationChanged;
+        Sidebar.OnChange -= StateHasChanged;
+    }
+}

@@ -1,3 +1,93 @@
 @import "tailwindcss";
 @source "../Client/**/*.razor";
 @source "../Components/**/*.razor";
+
+/* ── Design Tokens ──────────────────────────────────────────────────────── */
+@theme {
+	/* Font */
+	--font-sans: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+
+	/* Brand — Teal */
+	--color-primary:            hsl(179 100% 28%);
+	--color-primary-foreground: hsl(0 0% 100%);
+
+	/* Semantic surfaces */
+	--color-background:       hsl(0 0% 100%);
+	--color-foreground:       hsl(240 10% 3.9%);
+	--color-card:             hsl(0 0% 100%);
+	--color-card-foreground:  hsl(240 10% 3.9%);
+	--color-muted:            hsl(240 4.8% 95.9%);
+	--color-muted-foreground: hsl(240 3.8% 46.1%);
+	--color-border:           hsl(240 5.9% 90%);
+	--color-input:            hsl(240 5.9% 90%);
+	--color-ring:             hsl(179 100% 28%);
+	--color-destructive:      hsl(0 84.2% 60.2%);
+
+	/* Text emphasis hierarchy */
+	--color-high-emphasis:   hsl(0 0% 6%);
+	--color-medium-emphasis: hsl(0 0% 31%);
+	--color-low-emphasis:    hsl(0 0% 62%);
+
+	/* Status */
+	--color-success:               hsl(142 72% 29%);
+	--color-success-background:    hsl(142 72% 95%);
+	--color-success-high-emphasis: hsl(142 72% 20%);
+	--color-error:                 hsl(0 84.2% 60.2%);
+	--color-error-background:      hsl(0 86% 97%);
+	--color-warning:               hsl(32 95% 44%);
+	--color-warning-background:    hsl(48 100% 89%);
+
+	/* Border radius scale */
+	--radius-sm:  0.25rem;
+	--radius:     0.375rem;
+	--radius-md:  0.375rem;
+	--radius-lg:  0.5rem;
+	--radius-xl:  0.75rem;
+	--radius-2xl: 1rem;
+}
+
+/* ── Dark Mode Overrides ────────────────────────────────────────────────── */
+.dark {
+	--color-background:       hsl(20 14.3% 4.1%);
+	--color-foreground:       hsl(0 0% 95%);
+	--color-card:             hsl(24 9.8% 10%);
+	--color-card-foreground:  hsl(0 0% 95%);
+	--color-muted:            hsl(0 0% 15%);
+	--color-muted-foreground: hsl(240 5% 64.9%);
+	--color-border:           hsl(240 3.7% 15.9%);
+	--color-input:            hsl(240 3.7% 15.9%);
+	--color-high-emphasis:    hsl(0 0% 100%);
+	--color-medium-emphasis:  hsl(0 0% 69%);
+	--color-low-emphasis:     hsl(0 0% 82%);
+}
+
+/* ── Base Styles ────────────────────────────────────────────────────────── */
+@layer base {
+	*, *::before, *::after {
+		border-color: var(--color-border);
+	}
+
+	body {
+		font-family: var(--font-sans);
+		background-color: var(--color-background);
+		color: var(--color-foreground);
+		-webkit-font-smoothing: antialiased;
+	}
+}
+
+/* ── Component Utilities ────────────────────────────────────────────────── */
+@layer utilities {
+	.form-input {
+		@apply w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-high-emphasis placeholder:text-medium-emphasis focus:outline-none focus:ring-2 focus:ring-primary;
+	}
+}
+
+/* ── Animations ─────────────────────────────────────────────────────────── */
+@keyframes slide-in-right {
+	from { transform: translateX(100%); }
+	to   { transform: translateX(0); }
+}
+
+.animate-slide-in-right {
+	animation: slide-in-right 0.25s ease-out;
+}

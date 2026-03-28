@@ -1,0 +1,27 @@
+@page "/email-sent"
+@rendermode InteractiveAuto
+@layout AuthLayout
+
+<PageTitle>Email Sent</PageTitle>
+
+<div class="flex flex-col gap-6">
+    <div class="flex justify-center">
+        <img src="/images/email_sent.svg" alt="Email Sent" class="h-32 w-32" />
+    </div>
+
+    <div>
+        <h1 class="mb-4 text-2xl font-bold text-high-emphasis">Email Sent!</h1>
+        <p class="text-base font-normal leading-6 text-medium-emphasis">
+            A password reset link has been sent to your registered email address.
+            Please check your inbox and follow the instructions.
+        </p>
+    </div>
+
+    <a href="/login" class="block w-full rounded-md bg-primary py-2.5 text-center text-sm font-extrabold text-white hover:bg-primary/90 transition-colors">
+        Back to Login
+    </a>
+
+    <a href="/forgot-password" class="block w-full rounded-md py-2.5 text-center text-sm font-extrabold text-primary hover:underline">
+        Change Email Address
+    </a>
+</div>

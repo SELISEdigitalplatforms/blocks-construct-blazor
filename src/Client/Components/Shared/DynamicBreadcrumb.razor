@@ -1,0 +1,52 @@
+@inject NavigationManager Nav
+
+<nav aria-label="breadcrumb" class="hidden text-sm text-medium-emphasis sm:block">
+    <ol class="flex items-center gap-1.5">
+        @foreach (var (segment, index) in _segments.Select((s, i) => (s, i)))
+        {
+            <li class="flex items-center gap-1.5">
+                @if (index < _segments.Count - 1)
+                {
+                    <a href="/@string.Join("/", _rawSegments.Take(index + 1))" class="transition-colors hover:text-primary">@segment</a>
+                    <span class="text-low-emphasis">/</span>
+                }
+                else
+                {
+                    <span class="font-semibold text-high-emphasis">@segment</span>
+                }
+            </li>
+        }
+    </ol>
+</nav>
+
+@code {
+    private List<string> _segments = [];
+    private List<string> _rawSegments = [];
+
+    protected override void OnInitialized()
+    {
+        ParsePath();
+        Nav.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        ParsePath();
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void ParsePath()
+    {
+        var path = new Uri(Nav.Uri).AbsolutePath.Trim('/');
+        _rawSegments = path.Split('/', StringSplitOptions.RemoveEmptyEntries).ToList();
+        _segments = _rawSegments
+            .Select(s => System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(s.Replace("-", " ")))
+            .ToList();
+
+        if (_segments.Count == 0)
+        {
+            _segments.Add("Dashboard");
+            _rawSegments.Add("dashboard");
+        }
+    }
+}

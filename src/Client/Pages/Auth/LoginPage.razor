@@ -1,179 +1,103 @@
 @page "/login"
 @rendermode InteractiveAuto
-@using System.ComponentModel.DataAnnotations
-@using System.Net.Http.Json
-@using Microsoft.AspNetCore.Components.Forms
-@inject HttpClient Http
-@inject NavigationManager Navigation
+@layout AuthLayout
+@inject IAuthService AuthService
+@inject AppAuthStateProvider AuthState
+@inject NavigationManager Nav
 
-<div class="flex min-h-screen">
-    @* Left branding panel — hidden on small screens *@
-    <div class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-blue-700 via-blue-600 to-blue-800 flex-col justify-between p-12 text-white">
-        <div>
-            <div class="flex items-center gap-3 mb-16">
-                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                </div>
-                <span class="text-xl font-bold tracking-tight">Blocks Platform</span>
-            </div>
-            <h1 class="text-4xl xl:text-5xl font-extrabold leading-tight mb-6">
-                Build with confidence.
-            </h1>
-            <p class="text-lg text-blue-100 max-w-md leading-relaxed">
-                A secure, scalable enterprise platform to accelerate your digital transformation.
-            </p>
-        </div>
-        <p class="text-sm text-blue-200">&copy; @DateTime.Now.Year Blocks Platform. All rights reserved.</p>
-    </div>
+<PageTitle>Log In</PageTitle>
 
-    @* Right login form panel *@
-    <div class="flex flex-1 items-center justify-center bg-gray-50 px-6 py-12 sm:px-12">
-        <div class="w-full max-w-md">
-            @* Mobile logo *@
-            <div class="flex items-center gap-2 mb-10 lg:hidden">
-                <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                    </svg>
-                </div>
-                <span class="text-lg font-bold text-gray-900 tracking-tight">Blocks Platform</span>
-            </div>
-
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Sign in to your account</h2>
-                <p class="mt-2 text-sm text-gray-500">Enter your credentials to access the platform.</p>
-            </div>
-
-            @if (!string.IsNullOrEmpty(ErrorMessage))
-            {
-                <div class="mt-6 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4" role="alert">
-                    <svg class="mt-0.5 h-5 w-5 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                    </svg>
-                    <p class="text-sm text-red-700">@ErrorMessage</p>
-                </div>
-            }
-
-            <EditForm Model="LoginModel" OnValidSubmit="HandleLogin" FormName="login" class="mt-8 space-y-5">
-                <DataAnnotationsValidator />
-
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
-                    <InputText
-                        id="email"
-                        @bind-Value="LoginModel.Email"
-                        type="email"
-                        placeholder="name@company.com"
-                        disabled="@IsLoading"
-                        class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 transition" />
-                    <ValidationMessage For="@(() => LoginModel.Email)" class="mt-1 text-xs text-red-600" />
-                </div>
-
-                <div>
-                    <div class="flex items-center justify-between">
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <a href="/forgot-password" class="text-sm font-medium text-blue-600 hover:text-blue-500 transition">Forgot password?</a>
-                    </div>
-                    <InputText
-                        id="password"
-                        @bind-Value="LoginModel.Password"
-                        type="password"
-                        placeholder="Enter your password"
-                        disabled="@IsLoading"
-                        class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 transition" />
-                    <ValidationMessage For="@(() => LoginModel.Password)" class="mt-1 text-xs text-red-600" />
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <InputCheckbox
-                        id="rememberMe"
-                        @bind-Value="LoginModel.RememberMe"
-                        disabled="@IsLoading"
-                        class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                    <label for="rememberMe" class="text-sm text-gray-600 select-none">Remember me for 30 days</label>
-                </div>
-
-                <button
-                    type="submit"
-                    disabled="@(IsLoading || !IsFormValid())"
-                    class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                    @if (IsLoading)
-                    {
-                        <svg class="h-4 w-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                        </svg>
-                        <span>Signing in…</span>
-                    }
-                    else
-                    {
-                        <span>Sign in</span>
-                    }
-                </button>
-            </EditForm>
-
-            <p class="mt-8 text-center text-sm text-gray-500">
-                Don't have an account?
-                <a href="/signup" class="font-semibold text-blue-600 hover:text-blue-500 transition">Create an account</a>
-            </p>
+<div class="flex flex-col gap-6">
+    <div>
+        <h1 class="text-2xl font-bold text-high-emphasis">Log In</h1>
+        <div class="mt-1 flex items-center gap-1">
+            <span class="text-sm font-normal text-medium-emphasis">Don't have an account?</span>
+            <a href="/signup" class="text-sm font-bold text-primary hover:underline">Sign Up</a>
         </div>
     </div>
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
+            <strong>Invalid credentials.</strong> @_errorMessage
+        </div>
+    }
+
+    <EditForm Model="_model" OnValidSubmit="HandleLogin" class="flex flex-col gap-4">
+        <DataAnnotationsValidator />
+
+        <div class="flex flex-col gap-1">
+            <label class="text-sm font-normal text-high-emphasis">Email</label>
+            <InputText @bind-Value="_model.Username"
+                       class="w-full rounded-md border border-input px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                       placeholder="Enter your email" />
+            <ValidationMessage For="@(() => _model.Username)" class="text-xs text-destructive" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-sm font-normal text-high-emphasis">Password</label>
+            <PasswordInput @bind-Value="_model.Password" Placeholder="Enter your password" />
+            <ValidationMessage For="@(() => _model.Password)" class="text-xs text-destructive" />
+        </div>
+
+        <div class="flex justify-end">
+            <a href="/forgot-password" class="text-sm text-primary hover:text-primary-600 hover:underline">
+                Forgot Password?
+            </a>
+        </div>
+
+        <button type="submit"
+                class="w-full rounded-md bg-primary py-2.5 text-sm font-extrabold text-white disabled:opacity-50 hover:bg-primary/90 transition-colors"
+                disabled="@_isLoading">
+            @(_isLoading ? "Logging in..." : "Log In")
+        </button>
+    </EditForm>
 </div>
 
 @code {
-    private LoginFormModel LoginModel = new();
-    private string ErrorMessage = string.Empty;
-    private bool IsLoading = false;
+    private SignInRequest _model = new();
+    private string _errorMessage = "";
+    private bool _isLoading;
 
-    private bool IsFormValid() =>
-        !string.IsNullOrWhiteSpace(LoginModel.Email) &&
-        !string.IsNullOrWhiteSpace(LoginModel.Password);
-
-    private async Task HandleLogin()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        ErrorMessage = string.Empty;
-        IsLoading = true;
-
-        try
+        if (!firstRender)
         {
-            if (!IsFormValid())
-            {
-                ErrorMessage = "Please enter both email and password.";
-                return;
-            }
-
-            await Task.Delay(500); // Simulated network delay
-
-            if (LoginModel.Email.Contains("demo"))
-            {
-                Navigation.NavigateTo("/", forceLoad: true);
-            }
-            else
-            {
-                ErrorMessage = "Invalid email or password. Please check your credentials and try again.";
-            }
+            return;
         }
-        catch (Exception)
+
+        var token = await AuthService.GetAccessTokenAsync();
+        if (!string.IsNullOrEmpty(token))
         {
-            ErrorMessage = "An unexpected error occurred. Please try again later.";
-        }
-        finally
-        {
-            IsLoading = false;
+            Nav.NavigateTo("/dashboard", replace: true);
         }
     }
 
-    public class LoginFormModel
+    private async Task HandleLogin()
     {
-        [Required(ErrorMessage = "Email address is required.")]
-        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
-        public string Email { get; set; } = string.Empty;
+        _isLoading = true;
+        _errorMessage = "";
 
-        [Required(ErrorMessage = "Password is required.")]
-        public string Password { get; set; } = string.Empty;
+        try
+        {
+            var result = await AuthService.SignInAsync(_model.Username, _model.Password);
 
-        public bool RememberMe { get; set; } = false;
+            if (result.EnableMfa)
+            {
+                Nav.NavigateTo($"/verify-mfa?mfa_id={result.MfaId}&mfa_type={result.MfaType}&user_name={Uri.EscapeDataString(_model.Username)}", replace: true);
+                return;
+            }
+
+            AuthState.NotifyAuthStateChanged();
+            Nav.NavigateTo("/dashboard", replace: true);
+        }
+        catch
+        {
+            _errorMessage = "Your email or password is incorrect. Please try again.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 }

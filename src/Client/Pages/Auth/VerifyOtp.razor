@@ -1,0 +1,151 @@
+@page "/verify-mfa"
+@rendermode InteractiveAuto
+@layout AuthLayout
+@inject IAuthService AuthService
+@inject AppAuthStateProvider AuthState
+@inject NavigationManager Nav
+
+<PageTitle>Verify Key</PageTitle>
+
+<div class="flex flex-col gap-10">
+    <div class="flex flex-col gap-2">
+        <h1 class="text-2xl font-bold text-high-emphasis">Verifying Key</h1>
+        <p class="text-sm font-normal text-medium-emphasis">
+            @if (_mfaType == "authenticator")
+            {
+                <span>Enter the 6-digit code from your authenticator app.</span>
+            }
+            else
+            {
+                <span>Enter the verification key sent to <strong>@MaskEmail(UserEmail)</strong>.</span>
+            }
+        </p>
+    </div>
+
+    <div class="flex justify-center gap-2">
+        @for (var i = 0; i < _codeLength; i++)
+        {
+            var idx = i;
+            <input @ref="_inputRefs[idx]"
+                   maxlength="1"
+                   type="text"
+                   inputmode="numeric"
+                   pattern="[0-9]*"
+                   class="h-12 w-12 rounded-md border-2 text-center text-xl font-bold transition-colors focus:border-primary focus:outline-none @(_hasError ? "border-red-400 text-red-600" : "border-input")"
+                   value="@_digits[idx]"
+                   @oninput="@(e => OnDigitInput(idx, e))"
+                   @onkeydown="@(e => OnKeyDown(idx, e))" />
+        }
+    </div>
+
+    @if (_hasError)
+    {
+        <p class="-mt-6 text-center text-sm text-destructive">Invalid code. Please try again.</p>
+    }
+
+    <div class="flex flex-col gap-4">
+        <button @onclick="HandleVerify"
+                class="w-full rounded-md bg-primary py-2.5 text-sm font-extrabold text-white disabled:opacity-50 hover:bg-primary/90 transition-colors"
+                disabled="@(_isLoading || !IsComplete)">
+            @(_isLoading ? "Verifying..." : "Verify")
+        </button>
+
+        <a href="/login" class="text-center text-sm text-primary hover:underline">Back to Login</a>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "mfa_id")]
+    private string MfaId { get; set; } = "";
+
+    [SupplyParameterFromQuery(Name = "mfa_type")]
+    private string MfaType { get; set; } = "";
+
+    [SupplyParameterFromQuery(Name = "user_name")]
+    private string UserEmail { get; set; } = "";
+
+    private string _mfaType = "";
+    private int _codeLength;
+    private string[] _digits = [];
+    private ElementReference[] _inputRefs = [];
+    private bool _isLoading;
+    private bool _hasError;
+
+    protected override void OnParametersSet()
+    {
+        _mfaType = MfaType;
+        _codeLength = _mfaType == "authenticator" ? 6 : 5;
+        _digits = new string[_codeLength];
+        _inputRefs = new ElementReference[_codeLength];
+        for (var i = 0; i < _codeLength; i++) _digits[i] = "";
+    }
+
+    private bool IsComplete => _digits.All(d => d.Length == 1);
+    private string Code => string.Join("", _digits);
+
+    private async Task OnDigitInput(int index, ChangeEventArgs e)
+    {
+        var raw = e.Value?.ToString() ?? "";
+        var digitChar = raw.LastOrDefault(char.IsDigit);
+        _digits[index] = digitChar == default ? "" : digitChar.ToString();
+        _hasError = false;
+
+        if (_digits[index].Length == 1 && index < _codeLength - 1)
+        {
+            await _inputRefs[index + 1].FocusAsync();
+        }
+
+        if (IsComplete)
+        {
+            await HandleVerify();
+        }
+    }
+
+    private async Task OnKeyDown(int index, KeyboardEventArgs e)
+    {
+        if (e.Key == "Backspace" && string.IsNullOrEmpty(_digits[index]) && index > 0)
+        {
+            _digits[index - 1] = "";
+            await _inputRefs[index - 1].FocusAsync();
+        }
+    }
+
+    private async Task HandleVerify()
+    {
+        if (!IsComplete || _isLoading) return;
+
+        _isLoading = true;
+        _hasError = false;
+
+        try
+        {
+            await AuthService.VerifyMfaAsync(new MfaVerifyRequest
+            {
+                MfaId = MfaId,
+                MfaType = _mfaType,
+                Code = Code
+            });
+
+            AuthState.NotifyAuthStateChanged();
+            Nav.NavigateTo("/dashboard", replace: true);
+        }
+        catch
+        {
+            _hasError = true;
+            for (var i = 0; i < _codeLength; i++) _digits[i] = "";
+            await _inputRefs[0].FocusAsync();
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private static string MaskEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email)) return "";
+        var parts = email.Split('@');
+        if (parts.Length != 2 || parts[0].Length == 0) return email;
+        return $"{parts[0][0]}****@{parts[1]}";
+    }
+}

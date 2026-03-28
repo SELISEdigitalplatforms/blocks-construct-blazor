@@ -1,0 +1,16 @@
+<div class="flex flex-col gap-1">
+    <label class="text-sm font-normal text-high-emphasis">
+        @Label
+        @if (Required)
+        {
+            <span class="ml-0.5 text-destructive">*</span>
+        }
+    </label>
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public bool Required { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+}

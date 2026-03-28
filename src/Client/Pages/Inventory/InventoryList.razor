@@ -1,0 +1,163 @@
+@page "/inventory"
+@rendermode InteractiveAuto
+@attribute [Authorize]
+@inject IInventoryService InventoryService
+@inject NavigationManager Nav
+
+<PageTitle>Inventory</PageTitle>
+
+<div class="flex w-full flex-col gap-6">
+    <div class="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+        <div class="flex flex-wrap gap-3">
+            <input type="text" @bind="_search" @bind:event="oninput" @bind:after="OnFilterChanged" placeholder="Search items" class="form-input max-w-xs" />
+            <select @bind="_category" @bind:after="OnFilterChanged" class="form-input max-w-xs">
+                <option value="">All Categories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Office">Office</option>
+                <option value="Hardware">Hardware</option>
+            </select>
+            <select @bind="_status" @bind:after="OnFilterChanged" class="form-input max-w-xs">
+                <option value="">All Status</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+        </div>
+
+        <button @onclick='() => Nav.NavigateTo("/inventory/add")' class="flex shrink-0 items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-extrabold text-white hover:bg-primary/90">
+            Add Item
+        </button>
+    </div>
+
+    <div class="overflow-hidden rounded-lg border bg-card">
+        @if (_isLoading)
+        {
+            <div class="flex h-40 items-center justify-center"><LoadingSpinner /></div>
+        }
+        else
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-muted/50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-medium-emphasis">Item</th>
+                            <th class="hidden px-4 py-3 text-left text-sm font-medium text-medium-emphasis md:table-cell">Category</th>
+                            <th class="hidden px-4 py-3 text-left text-sm font-medium text-medium-emphasis lg:table-cell">Supplier</th>
+                            <th class="hidden px-4 py-3 text-left text-sm font-medium text-medium-emphasis lg:table-cell">Location</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-medium-emphasis">Stock</th>
+                            <th class="hidden px-4 py-3 text-left text-sm font-medium text-medium-emphasis md:table-cell">Price</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-medium-emphasis">Status</th>
+                            <th class="px-4 py-3 text-right text-sm font-medium text-medium-emphasis">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        @if (_items.Count == 0)
+                        {
+                            <tr><td colspan="8" class="px-4 py-12 text-center text-medium-emphasis">No items found.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in _items)
+                            {
+                                <tr class="cursor-pointer hover:bg-muted/30 transition-colors" @onclick='() => Nav.NavigateTo($"/inventory/{item.ItemId}")'>
+                                    <td class="px-4 py-3 font-medium text-high-emphasis">@item.ItemName</td>
+                                    <td class="hidden px-4 py-3 text-medium-emphasis md:table-cell">@item.Category</td>
+                                    <td class="hidden px-4 py-3 text-medium-emphasis lg:table-cell">@item.Supplier</td>
+                                    <td class="hidden px-4 py-3 text-medium-emphasis lg:table-cell">@item.ItemLoc</td>
+                                    <td class="px-4 py-3 text-medium-emphasis">@item.Stock</td>
+                                    <td class="hidden px-4 py-3 text-medium-emphasis md:table-cell">@item.Price.ToString("C")</td>
+                                    <td class="px-4 py-3">
+                                        @if (string.Equals(item.Status, "Active", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <span class="inline-flex items-center rounded-full border border-success px-2.5 py-0.5 text-xs font-medium text-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="inline-flex items-center rounded-full border border-red-300 px-2.5 py-0.5 text-xs font-medium text-red-600">@item.Status</span>
+                                        }
+                                    </td>
+                                    <td class="px-4 py-3 text-right" @onclick:stopPropagation="true">
+                                        <div class="flex items-center justify-end gap-1">
+                                            <button class="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted" @onclick='() => Nav.NavigateTo($"/inventory/{item.ItemId}/edit")'>Edit</button>
+                                            <button class="rounded-md border border-red-200 px-2 py-1 text-xs text-red-600 hover:bg-red-50" @onclick="() => ConfirmDelete(item)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex items-center justify-between border-t px-4 py-3 text-sm text-medium-emphasis">
+                <span>Showing @(Math.Min(_page * _pageSize + 1, _totalCount))–@(Math.Min((_page + 1) * _pageSize, _totalCount)) of @_totalCount</span>
+                <div class="flex gap-2">
+                    <button class="rounded-md border px-3 py-1 text-sm disabled:opacity-40 hover:bg-muted" @onclick="PrevPage" disabled="@(_page == 0)">← Previous</button>
+                    <span class="self-center px-1">Page @(_page + 1)</span>
+                    <button class="rounded-md border px-3 py-1 text-sm disabled:opacity-40 hover:bg-muted" @onclick="NextPage" disabled="@((_page + 1) * _pageSize >= _totalCount)">Next →</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<ConfirmModal IsOpen="_showDeleteConfirm"
+              Title="Delete Item"
+              Description="@($"Delete \"{_deleteTarget?.ItemName}\"? This cannot be undone.")"
+              ConfirmLabel="Delete"
+              ConfirmClass="bg-red-600 text-white hover:bg-red-700"
+              OnConfirm="ExecuteDelete"
+              OnCancel="() => _showDeleteConfirm = false" />
+
+@code {
+    private List<InventoryItem> _items = [];
+    private bool _isLoading = true;
+    private int _page;
+    private int _pageSize = 10;
+    private int _totalCount;
+    private string _search = "";
+    private string _category = "";
+    private string _status = "";
+
+    private InventoryItem? _deleteTarget;
+    private bool _showDeleteConfirm;
+    private System.Timers.Timer? _debounce;
+
+    protected override async Task OnInitializedAsync() => await LoadItems();
+
+    private async Task LoadItems()
+    {
+        _isLoading = true;
+        var result = await InventoryService.GetItemsAsync(_page, _pageSize, _search, _category, _status);
+        _items = result.Data;
+        _totalCount = result.TotalCount;
+        _isLoading = false;
+    }
+
+    private Task OnFilterChanged()
+    {
+        _debounce?.Stop();
+        _debounce?.Dispose();
+        _debounce = new System.Timers.Timer(400);
+        _debounce.Elapsed += async (_, _) =>
+        {
+            _page = 0;
+            await InvokeAsync(LoadItems);
+            _debounce?.Dispose();
+        };
+        _debounce.AutoReset = false;
+        _debounce.Start();
+        return Task.CompletedTask;
+    }
+
+    private async Task NextPage() { _page++; await LoadItems(); }
+    private async Task PrevPage() { if (_page > 0) { _page--; await LoadItems(); } }
+
+    private void ConfirmDelete(InventoryItem item) { _deleteTarget = item; _showDeleteConfirm = true; }
+
+    private async Task ExecuteDelete()
+    {
+        if (_deleteTarget is not null) await InventoryService.DeleteItemAsync(_deleteTarget.ItemId);
+        _showDeleteConfirm = false;
+        await LoadItems();
+    }
+}

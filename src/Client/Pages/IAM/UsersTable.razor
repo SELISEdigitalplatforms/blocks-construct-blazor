@@ -1,0 +1,184 @@
+@page "/identity-management"
+@rendermode InteractiveAuto
+@attribute [Authorize]
+@inject IUserService UserService
+
+<PageTitle>Identity &amp; Access Management</PageTitle>
+
+<div class="flex h-full w-full flex-col gap-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold tracking-tight text-high-emphasis">Identity &amp; Access Management</h1>
+        <AuthorizeView Roles="admin">
+            <Authorized>
+                <button class="rounded bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90" @onclick="() => _showAddUser = true">Add User</button>
+            </Authorized>
+        </AuthorizeView>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+        <input type="text" @bind="_searchEmail" @bind:event="oninput" @bind:after="OnFilterChanged" placeholder="Search by email" class="form-input max-w-xs" />
+        <input type="text" @bind="_searchName" @bind:event="oninput" @bind:after="OnFilterChanged" placeholder="Search by name" class="form-input max-w-xs" />
+    </div>
+
+    <div class="flex-1 overflow-hidden rounded-lg border bg-card">
+        @if (_isLoading)
+        {
+            <div class="flex h-40 items-center justify-center"><LoadingSpinner /></div>
+        }
+        else
+        {
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-muted/50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-medium-emphasis">Name</th>
+                            <th class="hidden px-4 py-3 text-left text-sm font-medium text-medium-emphasis md:table-cell">Email</th>
+                            <th class="hidden px-4 py-3 text-left text-sm font-medium text-medium-emphasis lg:table-cell">MFA</th>
+                            <th class="hidden px-4 py-3 text-left text-sm font-medium text-medium-emphasis lg:table-cell">Joined</th>
+                            <th class="hidden px-4 py-3 text-left text-sm font-medium text-medium-emphasis lg:table-cell">Last Login</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium text-medium-emphasis">Status</th>
+                            <th class="px-4 py-3 text-right text-sm font-medium text-medium-emphasis">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border">
+                        @if (_users.Count == 0)
+                        {
+                            <tr><td colspan="7" class="px-4 py-12 text-center text-medium-emphasis">No users found.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var user in _users)
+                            {
+                                <tr class="cursor-pointer hover:bg-muted/30 transition-colors" @onclick="() => ViewDetails(user)">
+                                    <td class="px-4 py-3 font-medium text-high-emphasis">@user.FullName</td>
+                                    <td class="hidden px-4 py-3 text-medium-emphasis md:table-cell">@user.Email</td>
+                                    <td class="hidden px-4 py-3 lg:table-cell">
+                                        @if (user.MfaEnabled)
+                                        {
+                                            <span class="text-success">Enabled</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-medium-emphasis">Disabled</span>
+                                        }
+                                    </td>
+                                    <td class="hidden px-4 py-3 text-medium-emphasis lg:table-cell">@user.CreatedDate.ToString("dd MMM yyyy")</td>
+                                    <td class="hidden px-4 py-3 text-medium-emphasis lg:table-cell">@(user.LastLoggedInTime?.ToString("dd MMM yyyy") ?? "-")</td>
+                                    <td class="px-4 py-3">
+                                        @if (user.Active)
+                                        {
+                                            <span class="inline-flex items-center rounded-full border border-success px-2.5 py-0.5 text-xs font-medium text-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="inline-flex items-center rounded-full border border-red-300 px-2.5 py-0.5 text-xs font-medium text-red-600">Inactive</span>
+                                        }
+                                    </td>
+                                    <td class="px-4 py-3 text-right" @onclick:stopPropagation="true">
+                                        <button class="rounded-md border border-border px-2 py-1 text-xs hover:bg-muted" @onclick="() => ConfirmReset(user)">Reset Password</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex items-center justify-between border-t px-4 py-3 text-sm text-medium-emphasis">
+                <span>Showing @(Math.Min(_page * _pageSize + 1, _totalCount))–@(Math.Min((_page + 1) * _pageSize, _totalCount)) of @_totalCount</span>
+                <div class="flex gap-2">
+                    <button class="rounded-md border px-3 py-1 text-sm disabled:opacity-40 hover:bg-muted" @onclick="PrevPage" disabled="@(_page == 0)">← Previous</button>
+                    <span class="self-center px-1">Page @(_page + 1)</span>
+                    <button class="rounded-md border px-3 py-1 text-sm disabled:opacity-40 hover:bg-muted" @onclick="NextPage" disabled="@((_page + 1) * _pageSize >= _totalCount)">Next →</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@if (_selectedUser is not null)
+{
+    <UserDetailsDrawer User="_selectedUser" OnClose="() => _selectedUser = null" OnResetPassword="ConfirmReset" OnResendActivation="ConfirmResend" />
+}
+
+@if (_showAddUser)
+{
+    <AddUserModal OnClose="() => _showAddUser = false" OnSaved="LoadUsers" />
+}
+
+<ConfirmModal IsOpen="_showResetConfirm"
+              Title="Reset Password"
+              Description="@($"A password reset email will be sent to {_actionUser?.Email}.")"
+              ConfirmLabel="Send Reset Email"
+              OnConfirm="ExecuteReset"
+              OnCancel="() => _showResetConfirm = false" />
+
+<ConfirmModal IsOpen="_showResendConfirm"
+              Title="Resend Activation Email"
+              Description="@($"Resend the activation email to {_actionUser?.Email}?")"
+              ConfirmLabel="Resend"
+              OnConfirm="ExecuteResend"
+              OnCancel="() => _showResendConfirm = false" />
+
+@code {
+    private List<IamUser> _users = [];
+    private bool _isLoading = true;
+    private int _page;
+    private int _pageSize = 10;
+    private int _totalCount;
+    private string _searchEmail = "";
+    private string _searchName = "";
+
+    private IamUser? _selectedUser;
+    private IamUser? _actionUser;
+    private bool _showAddUser;
+    private bool _showResetConfirm;
+    private bool _showResendConfirm;
+    private System.Timers.Timer? _debounce;
+
+    protected override async Task OnInitializedAsync() => await LoadUsers();
+
+    private async Task LoadUsers()
+    {
+        _isLoading = true;
+        var result = await UserService.GetUsersAsync(_page, _pageSize, _searchEmail, _searchName);
+        _users = result.Data;
+        _totalCount = result.TotalCount;
+        _isLoading = false;
+    }
+
+    private Task OnFilterChanged()
+    {
+        _debounce?.Stop();
+        _debounce?.Dispose();
+        _debounce = new System.Timers.Timer(400);
+        _debounce.Elapsed += async (_, _) =>
+        {
+            _page = 0;
+            await InvokeAsync(LoadUsers);
+            _debounce?.Dispose();
+        };
+        _debounce.AutoReset = false;
+        _debounce.Start();
+        return Task.CompletedTask;
+    }
+
+    private async Task NextPage() { _page++; await LoadUsers(); }
+    private async Task PrevPage() { if (_page > 0) { _page--; await LoadUsers(); } }
+
+    private void ViewDetails(IamUser user) => _selectedUser = user;
+    private void ConfirmReset(IamUser user) { _actionUser = user; _showResetConfirm = true; }
+    private void ConfirmResend(IamUser user) { _actionUser = user; _showResendConfirm = true; }
+
+    private async Task ExecuteReset()
+    {
+        if (_actionUser is not null) await UserService.SendPasswordResetAsync(_actionUser.Email);
+        _showResetConfirm = false;
+    }
+
+    private async Task ExecuteResend()
+    {
+        if (_actionUser is not null) await UserService.ResendActivationAsync(_actionUser.Email);
+        _showResendConfirm = false;
+    }
+}

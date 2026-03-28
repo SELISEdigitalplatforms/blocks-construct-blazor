@@ -1,0 +1,20 @@
+@{
+    var isActive = CurrentPath.Contains(Href, StringComparison.OrdinalIgnoreCase) && Href != "/";
+    var activeClass = isActive ? "bg-primary/10 text-primary font-semibold" : "text-medium-emphasis hover:bg-muted hover:text-high-emphasis";
+}
+
+<a href="@Href" title="@(!IsOpen ? Label : "")" class="flex items-center gap-3 rounded-md px-2 py-2 text-sm transition-colors @activeClass">
+    <span class="flex h-5 w-5 shrink-0 items-center justify-center">@((MarkupString)IconSvg)</span>
+    @if (IsOpen)
+    {
+        <span class="truncate">@Label</span>
+    }
+</a>
+
+@code {
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string Href { get; set; } = "";
+    [Parameter] public string CurrentPath { get; set; } = "";
+    [Parameter] public bool IsOpen { get; set; } = true;
+    [Parameter] public string IconSvg { get; set; } = "";
+}

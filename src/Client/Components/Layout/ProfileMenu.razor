@@ -1,0 +1,92 @@
+@inject IAuthService AuthService
+@inject AppAuthStateProvider AuthState
+@inject IUserService UserService
+@inject NavigationManager Nav
+
+<div class="relative">
+    <button @onclick="ToggleDropdown" class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-muted">
+        <div class="relative h-8 w-8 overflow-hidden rounded-full border border-white shadow-sm">
+            <img src="@(_profile?.ProfileImageUrl ?? "/images/dummy_profile.png")" alt="Profile" class="h-full w-full object-cover" onerror="this.src='/images/dummy_profile.png'" />
+        </div>
+
+        <div class="hidden flex-col text-left leading-tight sm:flex">
+            <span class="text-xs font-semibold text-high-emphasis">@(_profile?.FullName ?? "Loading...")</span>
+            <span class="text-[10px] capitalize text-low-emphasis">@(_profile?.Roles.FirstOrDefault() ?? "")</span>
+        </div>
+
+        @((MarkupString)(_isOpen ? Icons.ChevronUp : Icons.ChevronDown))
+    </button>
+
+    @if (_isOpen)
+    {
+        <div class="fixed inset-0 z-40" @onclick="() => _isOpen = false"></div>
+
+        <div class="absolute bottom-full right-0 z-50 mb-2 w-56 rounded-md border bg-card shadow-lg" @onclick:stopPropagation="true">
+            <div class="py-1 text-sm">
+                <button @onclick="GoToProfile" class="w-full px-4 py-2 text-left text-high-emphasis hover:bg-muted">My Profile</button>
+                <button disabled class="w-full cursor-not-allowed px-4 py-2 text-left text-medium-emphasis opacity-50">About</button>
+                <button disabled class="w-full cursor-not-allowed px-4 py-2 text-left text-medium-emphasis opacity-50">Privacy Policy</button>
+
+                <div class="my-1 border-t"></div>
+
+                <button @onclick="ToggleTheme" class="flex w-full items-center justify-between px-4 py-2 text-high-emphasis hover:bg-muted">
+                    <span>Theme</span>
+                    @if (_isDark)
+                    {
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    }
+                    else
+                    {
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9 9 0 1020.354 15.354z"/></svg>
+                    }
+                </button>
+
+                <div class="my-1 border-t"></div>
+
+                <button @onclick="HandleLogout" class="w-full px-4 py-2 text-left font-medium text-red-600 hover:bg-muted">Log Out</button>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private UserProfile? _profile;
+    private bool _isOpen;
+    private bool _isDark;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _profile = await UserService.GetCurrentProfileAsync();
+        }
+        catch
+        {
+        }
+    }
+
+    private void ToggleDropdown() => _isOpen = !_isOpen;
+
+    private void GoToProfile()
+    {
+        _isOpen = false;
+        Nav.NavigateTo("/profile");
+    }
+
+    private void ToggleTheme() => _isDark = !_isDark;
+
+    private async Task HandleLogout()
+    {
+        _isOpen = false;
+        try
+        {
+            await AuthService.SignOutAsync();
+        }
+        catch
+        {
+        }
+
+        AuthState.NotifyAuthStateChanged();
+        Nav.NavigateTo("/login", replace: true);
+    }
+}

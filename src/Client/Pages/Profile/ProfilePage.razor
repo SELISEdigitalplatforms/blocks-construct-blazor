@@ -1,0 +1,107 @@
+@page "/profile"
+@rendermode InteractiveAuto
+@attribute [Authorize]
+@inject IUserService UserService
+
+<PageTitle>My Profile</PageTitle>
+
+<div class="flex w-full flex-col">
+    <div class="mb-5 flex items-center">
+        <h1 class="text-2xl font-bold tracking-tight text-high-emphasis">My Profile</h1>
+    </div>
+
+    <div class="mb-6 flex gap-2 border-b">
+        <button @onclick='() => _tab = "general"' class="border-b-2 pb-2 px-1 text-sm font-medium transition-colors @(_tab == "general" ? "border-primary text-primary" : "border-transparent text-medium-emphasis hover:text-high-emphasis")">General Info</button>
+        <button @onclick='() => _tab = "devices"' class="border-b-2 pb-2 px-1 text-sm font-medium transition-colors @(_tab == "devices" ? "border-primary text-primary" : "border-transparent text-medium-emphasis hover:text-high-emphasis")">Devices</button>
+    </div>
+
+    @if (_tab == "general")
+    {
+        <div class="flex flex-col gap-6">
+            @if (_isLoading)
+            {
+                <LoadingSpinner />
+            }
+            else if (_profile is null)
+            {
+                <div class="rounded-lg bg-card p-6 shadow-sm">
+                    <p class="text-sm text-medium-emphasis">Could not load profile information.</p>
+                </div>
+            }
+            else
+            {
+                <div class="rounded-lg bg-card p-6 shadow-sm">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="h-16 w-16 overflow-hidden rounded-full border shadow-sm">
+                                <img src="@(_profile.ProfileImageUrl ?? "/images/dummy_profile.png")" alt="Profile" class="h-full w-full object-cover" onerror="this.src='/images/dummy_profile.png'" />
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-semibold text-high-emphasis">@_profile.FullName</h2>
+                                <p class="text-sm text-medium-emphasis">@_profile.Email</p>
+                                <p class="text-xs text-low-emphasis">@string.Join(", ", _profile.Roles)</p>
+                            </div>
+                        </div>
+                        <button class="rounded border border-border px-3 py-1.5 text-sm hover:bg-muted" @onclick="() => _showEditModal = true">Edit</button>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <ProfileInfoItem Label="Phone" Value="@(_profile.PhoneNumber ?? "-")" />
+                        <ProfileInfoItem Label="Joined" Value="@_profile.CreatedDate.ToString("dd MMM yyyy")" />
+                        <ProfileInfoItem Label="Last Login" Value="@(_profile.LastLoggedInTime?.ToString("dd MMM yyyy") ?? "-")" />
+                        <ProfileInfoItem Label="MFA" Value="@(_profile.MfaEnabled ? "Enabled" : "Disabled")" />
+                    </div>
+                </div>
+
+                <div class="rounded-lg bg-card p-6 shadow-sm">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h3 class="font-semibold text-high-emphasis">Security</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <button class="rounded border border-border px-3 py-2 text-sm hover:bg-muted" @onclick="() => _show2faInfo = !_show2faInfo">Manage 2FA</button>
+                        <button class="rounded bg-primary px-3 py-2 text-sm font-semibold text-white hover:bg-primary/90" @onclick="() => _showChangePassword = true">Change Password</button>
+                    </div>
+                    @if (_show2faInfo)
+                    {
+                        <p class="mt-3 text-sm text-medium-emphasis">2FA management can be connected with IAM module actions.</p>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    @if (_tab == "devices")
+    {
+        <div class="rounded-lg bg-card p-6 shadow-sm">
+            <p class="text-sm text-medium-emphasis">Active sessions/devices UI placeholder. Connect this with your sessions API when available.</p>
+        </div>
+    }
+</div>
+
+@if (_showEditModal && _profile is not null)
+{
+    <EditProfileModal Profile="_profile" OnClose="() => _showEditModal = false" OnSaved="RefreshProfile" />
+}
+
+@if (_showChangePassword)
+{
+    <ChangePasswordModal OnClose="() => _showChangePassword = false" />
+}
+
+@code {
+    private UserProfile? _profile;
+    private bool _isLoading = true;
+    private string _tab = "general";
+    private bool _showEditModal;
+    private bool _showChangePassword;
+    private bool _show2faInfo;
+
+    protected override async Task OnInitializedAsync() => await RefreshProfile();
+
+    private async Task RefreshProfile()
+    {
+        _isLoading = true;
+        _profile = await UserService.GetCurrentProfileAsync();
+        _isLoading = false;
+    }
+}

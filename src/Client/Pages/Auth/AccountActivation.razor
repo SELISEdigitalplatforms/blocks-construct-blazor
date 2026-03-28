@@ -1,0 +1,76 @@
+@page "/activate"
+@rendermode InteractiveAuto
+@layout AuthLayout
+@inject IAuthService AuthService
+@inject NavigationManager Nav
+
+<PageTitle>Set Your Password</PageTitle>
+
+<div class="flex flex-col gap-6">
+    <div>
+        <h1 class="text-2xl font-bold text-high-emphasis">Set Your Password</h1>
+        <p class="mt-1 text-sm text-medium-emphasis">Secure your account by creating a strong password.</p>
+    </div>
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">@_errorMessage</div>
+    }
+
+    <EditForm Model="_model" OnValidSubmit="HandleSubmit" class="flex flex-col gap-4">
+        <DataAnnotationsValidator />
+
+        <div class="flex flex-col gap-1">
+            <label class="text-sm font-normal text-high-emphasis">New Password</label>
+            <PasswordInput @bind-Value="_model.Password" Placeholder="Create a password" />
+            <ValidationMessage For="@(() => _model.Password)" class="text-xs text-destructive" />
+            <PasswordStrengthBar Password="@_model.Password" />
+        </div>
+
+        <div class="flex flex-col gap-1">
+            <label class="text-sm font-normal text-high-emphasis">Confirm Password</label>
+            <PasswordInput @bind-Value="_model.ConfirmPassword" Placeholder="Confirm your password" />
+            <ValidationMessage For="@(() => _model.ConfirmPassword)" class="text-xs text-destructive" />
+        </div>
+
+        <button type="submit"
+                class="mt-4 w-full rounded-md bg-primary py-2.5 text-sm font-extrabold text-white disabled:opacity-50 hover:bg-primary/90 transition-colors"
+                disabled="@_isLoading">
+            @(_isLoading ? "Activating..." : "Activate Account")
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private SetPasswordRequest _model = new();
+    private string _errorMessage = "";
+    private bool _isLoading;
+
+    [SupplyParameterFromQuery(Name = "code")]
+    private string Code { get; set; } = "";
+
+    protected override void OnParametersSet()
+    {
+        _model.Code = Code;
+    }
+
+    private async Task HandleSubmit()
+    {
+        _isLoading = true;
+        _errorMessage = "";
+
+        try
+        {
+            await AuthService.SetPasswordAsync(_model);
+            Nav.NavigateTo("/activation-success");
+        }
+        catch
+        {
+            _errorMessage = "Activation failed. The link may have expired - please contact support.";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

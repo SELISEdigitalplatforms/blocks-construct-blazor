@@ -173,3 +173,36 @@ h1:focus {
     5%    { top: 40px; left: 40px; width: 0; height: 0; opacity: 1; }
     100%  { top: 0; left: 0; width: 80px; height: 80px; opacity: 0; }
 }
+
+/* Shared utility classes used by Client components */
+.form-input {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #111827;
+    background: #ffffff;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #15969b;
+    box-shadow: 0 0 0 3px rgba(21, 150, 155, 0.18);
+}
+
+.animate-slide-in-right {
+    animation: slide-in-right 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes slide-in-right {
+    from {
+        transform: translateX(24px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}

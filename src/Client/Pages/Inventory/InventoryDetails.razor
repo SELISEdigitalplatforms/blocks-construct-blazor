@@ -1,0 +1,94 @@
+@page "/inventory/{ItemId}"
+@rendermode InteractiveAuto
+@attribute [Authorize]
+@inject IInventoryService InventoryService
+@inject NavigationManager Nav
+
+<PageTitle>@(_item?.ItemName ?? "Item Details")</PageTitle>
+
+@if (_isLoading)
+{
+    <div class="flex h-64 items-center justify-center"><LoadingSpinner /></div>
+}
+else if (_item is null)
+{
+    <div class="py-24 text-center text-medium-emphasis">Item not found.</div>
+}
+else
+{
+    <div class="flex max-w-4xl flex-col gap-6">
+        <div class="flex items-center justify-between">
+            <button @onclick='() => Nav.NavigateTo("/inventory")' class="flex items-center gap-1 text-sm text-medium-emphasis hover:text-primary">Back to Inventory</button>
+            <div class="flex gap-2">
+                <button class="rounded border border-border px-3 py-1.5 text-sm hover:bg-muted" @onclick='() => Nav.NavigateTo($"/inventory/{ItemId}/edit")'>Edit</button>
+                <button class="rounded border border-red-200 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50" @onclick="() => _showDelete = true">Delete</button>
+            </div>
+        </div>
+
+        <div class="overflow-hidden rounded-lg bg-card shadow-sm">
+            <div class="flex flex-col md:flex-row">
+                <div class="md:w-1/3">
+                    <img src="/images/image_off_placeholder.webp" alt="Item" class="h-full min-h-56 w-full object-cover" />
+                </div>
+                <div class="flex-1 p-6">
+                    <div class="mb-4 flex items-start justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl font-bold text-high-emphasis">@_item.ItemName</h1>
+                            <p class="mt-1 text-sm text-medium-emphasis">@_item.Category</p>
+                        </div>
+                        <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">@_item.Status</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <InventoryField Label="Supplier" Value="@_item.Supplier" />
+                        <InventoryField Label="Location" Value="@_item.ItemLoc" />
+                        <InventoryField Label="Stock" Value="@_item.Stock.ToString()" />
+                        <InventoryField Label="Price" Value="@_item.Price.ToString("C")" />
+                    </div>
+
+                    <div class="mt-5 flex flex-wrap gap-2">
+                        @foreach (var tag in _item.Tags)
+                        {
+                            <span class="rounded-full bg-muted px-2 py-1 text-xs text-medium-emphasis">@tag</span>
+                        }
+                    </div>
+
+                    <div class="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                        <FlagBadge Label="Warranty" Active="@_item.EligibleWarranty" />
+                        <FlagBadge Label="Replacement" Active="@_item.EligibleReplacement" />
+                        <FlagBadge Label="Discount" Active="@_item.Discount" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ConfirmModal IsOpen="_showDelete"
+                  Title="Delete Item"
+                  Description="@($"Delete \"{_item.ItemName}\"? This action cannot be undone.")"
+                  ConfirmLabel="Delete"
+                  ConfirmClass="bg-red-600 text-white hover:bg-red-700"
+                  OnConfirm="ExecuteDelete"
+                  OnCancel="() => _showDelete = false" />
+}
+
+@code {
+    [Parameter] public string ItemId { get; set; } = "";
+
+    private InventoryItem? _item;
+    private bool _isLoading = true;
+    private bool _showDelete;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _isLoading = true;
+        _item = await InventoryService.GetItemAsync(ItemId);
+        _isLoading = false;
+    }
+
+    private async Task ExecuteDelete()
+    {
+        await InventoryService.DeleteItemAsync(ItemId);
+        Nav.NavigateTo("/inventory");
+    }
+}
