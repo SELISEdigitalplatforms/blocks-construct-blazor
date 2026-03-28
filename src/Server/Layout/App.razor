@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <ResourcePreloader />
+    <link rel="stylesheet" href="@Assets["app.tailwind.css"]" />
+    <link rel="stylesheet" href="@Assets["app.css"]" />
+    <link rel="stylesheet" href="@Assets["server.styles.css"]" />
+    <ImportMap />
+    <HeadOutlet />
+    @* Runs before Blazor hydrates — applies saved theme class to <html> without flash *@
+    <script>
+        (function () {
+            function applyTheme(theme) {
+                if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }
+            var saved = localStorage.getItem('theme') || 'system';
+            applyTheme(saved);
+            if (saved === 'system') {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+                    if (localStorage.getItem('theme') === 'system') applyTheme('system');
+                });
+            }
+            window.themeManager = {
+                set: function (theme) {
+                    localStorage.setItem('theme', theme);
+                    applyTheme(theme);
+                    if (theme === 'system') {
+                        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+                            if (localStorage.getItem('theme') === 'system') applyTheme('system');
+                        });
+                    }
+                },
+                get: function () {
+                    return localStorage.getItem('theme') || 'system';
+                }
+            };
+        })();
+    </script>
+</head>
+
+<body>
+    <Routes />
+    <ReconnectModal />
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+</body>
+
+</html>

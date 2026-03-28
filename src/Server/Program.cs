@@ -1,4 +1,4 @@
-using Server.Components.Layout;
+using Server.Layout;
 using Server.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +8,18 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
+
+// Scoped HttpClient used by Client components during SSR prerender.
+// Uses the current request's scheme+host so relative API paths (e.g. "api/sales-orders") resolve correctly.
+builder.Services.AddScoped<HttpClient>(sp =>
+{
+    var ctx = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    var baseAddress = ctx is not null
+        ? $"{ctx.Request.Scheme}://{ctx.Request.Host}/"
+        : "http://localhost/";
+    return new HttpClient { BaseAddress = new Uri(baseAddress) };
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

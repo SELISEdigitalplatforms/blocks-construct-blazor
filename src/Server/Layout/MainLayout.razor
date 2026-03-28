@@ -1,12 +1,12 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <ErrorBoundary>
     <ChildContent>
         @Body
     </ChildContent>
     <ErrorContent>
-        <div class="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
-            <svg class="h-5 w-5 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <div class="flex items-center gap-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4 text-sm text-red-700 dark:text-red-400" role="alert">
+            <svg class="h-5 w-5 shrink-0 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
             <span>An error has occurred. <a href="." class="font-semibold underline hover:no-underline">Reload</a></span>
@@ -18,4 +18,9 @@
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
+</div>
+
+@* Floating theme toggle — available on every page *@
+<div class="fixed top-4 right-4 z-50 shadow-md rounded-lg">
+    <ThemeToggle @rendermode="@(new InteractiveAutoRenderMode(prerender: false))" />
 </div>

@@ -1,3 +1,18 @@
 @import "tailwindcss";
 @source "../Client/**/*.razor";
 @source "../Components/**/*.razor";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary-50:  #f0f4fb;
+  --color-primary-100: #d9e6f5;
+  --color-primary-200: #abc8eb;
+  --color-primary-300: #75a8df;
+  --color-primary-400: #4581c9;
+  --color-primary-500: #2c5a9e;
+  --color-primary-600: #254d86;
+  --color-primary-700: #1c3b66;
+  --color-primary-800: #132846;
+  --color-primary-900: #0a1627;
+}

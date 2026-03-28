@@ -8,7 +8,7 @@
 
 <div class="flex min-h-screen">
     @* Left branding panel — hidden on small screens *@
-    <div class="hidden lg:flex lg:w-1/2 bg-linear-to-br from-blue-700 via-blue-600 to-blue-800 flex-col justify-between p-12 text-white">
+    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-700 via-primary-500 to-primary-800 flex-col justify-between p-12 text-white">
         <div>
             <div class="flex items-center gap-3 mb-16">
                 <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
@@ -21,38 +21,38 @@
             <h1 class="text-4xl xl:text-5xl font-extrabold leading-tight mb-6">
                 Build with confidence.
             </h1>
-            <p class="text-lg text-blue-100 max-w-md leading-relaxed">
+            <p class="text-lg text-primary-100 max-w-md leading-relaxed">
                 A secure, scalable enterprise platform to accelerate your digital transformation.
             </p>
         </div>
-        <p class="text-sm text-blue-200">&copy; @DateTime.Now.Year Blocks Platform. All rights reserved.</p>
+        <p class="text-sm text-primary-200">&copy; @DateTime.Now.Year Blocks Platform. All rights reserved.</p>
     </div>
 
     @* Right login form panel *@
-    <div class="flex flex-1 items-center justify-center bg-gray-50 px-6 py-12 sm:px-12">
+    <div class="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-900 px-6 py-12 sm:px-12 transition-colors duration-300">
         <div class="w-full max-w-md">
             @* Mobile logo *@
             <div class="flex items-center gap-2 mb-10 lg:hidden">
-                <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
                 </div>
-                <span class="text-lg font-bold text-gray-900 tracking-tight">Blocks Platform</span>
+                <span class="text-lg font-bold text-gray-900 dark:text-white tracking-tight">Blocks Platform</span>
             </div>
 
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 tracking-tight">Sign in to your account</h2>
-                <p class="mt-2 text-sm text-gray-500">Enter your credentials to access the platform.</p>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Sign in to your account</h2>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Enter your credentials to access the platform.</p>
             </div>
 
             @if (!string.IsNullOrEmpty(ErrorMessage))
             {
-                <div class="mt-6 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 p-4" role="alert">
-                    <svg class="mt-0.5 h-5 w-5 shrink-0 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <div class="mt-6 flex items-start gap-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4" role="alert">
+                    <svg class="mt-0.5 h-5 w-5 shrink-0 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                     </svg>
-                    <p class="text-sm text-red-700">@ErrorMessage</p>
+                    <p class="text-sm text-red-700 dark:text-red-400">@ErrorMessage</p>
                 </div>
             }
 
@@ -60,21 +60,21 @@
                 <DataAnnotationsValidator />
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email address</label>
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email address</label>
                     <InputText
                         id="email"
                         @bind-Value="LoginModel.Email"
                         type="email"
                         placeholder="name@company.com"
                         disabled="@IsLoading"
-                        class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 transition" />
-                    <ValidationMessage For="@(() => LoginModel.Email)" class="mt-1 text-xs text-red-600" />
+                        class="mt-1.5 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 shadow-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-700 transition" />
+                    <ValidationMessage For="@(() => LoginModel.Email)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
                 </div>
 
                 <div>
                     <div class="flex items-center justify-between">
-                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                        <a href="/forgot-password" class="text-sm font-medium text-blue-600 hover:text-blue-500 transition">Forgot password?</a>
+                        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                        <a href="/forgot-password" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition">Forgot password?</a>
                     </div>
                     <InputText
                         id="password"
@@ -82,8 +82,8 @@
                         type="password"
                         placeholder="Enter your password"
                         disabled="@IsLoading"
-                        class="mt-1.5 block w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 transition" />
-                    <ValidationMessage For="@(() => LoginModel.Password)" class="mt-1 text-xs text-red-600" />
+                        class="mt-1.5 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 shadow-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-700 transition" />
+                    <ValidationMessage For="@(() => LoginModel.Password)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -91,14 +91,14 @@
                         id="rememberMe"
                         @bind-Value="LoginModel.RememberMe"
                         disabled="@IsLoading"
-                        class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                    <label for="rememberMe" class="text-sm text-gray-600 select-none">Remember me for 30 days</label>
+                        class="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-primary-600 focus:ring-primary-500" />
+                    <label for="rememberMe" class="text-sm text-gray-600 dark:text-gray-400 select-none">Remember me for 30 days</label>
                 </div>
 
                 <button
                     type="submit"
                     disabled="@(IsLoading || !IsFormValid())"
-                    class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition">
                     @if (IsLoading)
                     {
                         <svg class="h-4 w-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
@@ -114,9 +114,9 @@
                 </button>
             </EditForm>
 
-            <p class="mt-8 text-center text-sm text-gray-500">
+            <p class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
                 Don't have an account?
-                <a href="/signup" class="font-semibold text-blue-600 hover:text-blue-500 transition">Create an account</a>
+                <a href="/signup" class="font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition">Create an account</a>
             </p>
         </div>
     </div>
@@ -176,4 +176,5 @@
 
         public bool RememberMe { get; set; } = false;
     }
+
 }

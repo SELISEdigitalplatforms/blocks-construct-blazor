@@ -5,43 +5,43 @@
 
 <PageTitle>Sales Dashboard</PageTitle>
 
-<div class="min-h-screen bg-gray-50 p-6">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 transition-colors duration-300">
 
     @* ── Full-page loading overlay ── *@
     @if (_loading)
     {
         <div class="flex flex-col items-center justify-center min-h-[70vh] gap-6">
             <div class="relative w-20 h-20">
-                <svg class="w-20 h-20 animate-spin text-teal-500" fill="none" viewBox="0 0 24 24">
+                <svg class="w-20 h-20 animate-spin text-primary-500" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-10" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" />
                     <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
             </div>
             <div class="text-center">
-                <p class="text-lg font-semibold text-gray-700 tracking-wide">Loading orders</p>
-                <p class="mt-1 text-sm text-gray-400">Fetching your sales data…</p>
+                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200 tracking-wide">Loading orders</p>
+                <p class="mt-1 text-sm text-gray-400 dark:text-gray-500">Fetching your sales data…</p>
             </div>
         </div>
     }
 
     @* ── Empty / error state ── *@
-    else if (_allOrders.Count == 0)
+    else if (AllOrders is null || AllOrders.Count == 0)
     {
         <div class="flex flex-col items-center justify-center min-h-[70vh] gap-6 text-center">
-            <svg class="w-48 h-48 text-gray-200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg class="w-48 h-48 text-gray-200 dark:text-gray-700" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="30" y="50" width="140" height="110" rx="10" fill="currentColor" />
                 <rect x="44" y="66" width="112" height="10" rx="5" fill="white" fill-opacity="0.6" />
                 <rect x="44" y="84" width="80" height="10" rx="5" fill="white" fill-opacity="0.4" />
                 <rect x="44" y="102" width="96" height="10" rx="5" fill="white" fill-opacity="0.4" />
                 <rect x="44" y="120" width="60" height="10" rx="5" fill="white" fill-opacity="0.3" />
-                <circle cx="148" cy="148" r="28" fill="#14b8a6" />
+                <circle cx="148" cy="148" r="28" fill="#2c5a9e" />
                 <path d="M136 148h24M148 136v24" stroke="white" stroke-width="3.5" stroke-linecap="round" />
             </svg>
             <div>
-                <p class="text-xl font-bold text-gray-700">No orders found</p>
-                <p class="mt-2 text-sm text-gray-400 max-w-xs">There are no sales orders to display right now. Try refreshing or check back later.</p>
+                <p class="text-xl font-bold text-gray-700 dark:text-gray-200">No orders found</p>
+                <p class="mt-2 text-sm text-gray-400 dark:text-gray-500 max-w-xs">There are no sales orders to display right now. Try refreshing or check back later.</p>
             </div>
-            <button class="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 transition-colors"
+            <button class="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 transition-colors"
                     @onclick="LoadOrdersAsync">
                 Try again
             </button>
@@ -54,12 +54,12 @@
     @* ── Header ── *@
     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Sales Orders</h1>
-            <p class="mt-1 text-sm text-gray-500">Overview of all sales orders</p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Sales Orders</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Overview of all sales orders</p>
         </div>
         <div class="flex items-center gap-3">
-            <label class="text-sm font-medium text-gray-600">Filter by status:</label>
-            <select class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+            <label class="text-sm font-medium text-gray-600 dark:text-gray-300">Filter by status:</label>
+            <select class="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
                     @bind="_statusFilter" @bind:after="ApplyFilter">
                 <option value="">All</option>
                 @foreach (var s in _allStatuses)
@@ -67,7 +67,7 @@
                     <option value="@s">@s</option>
                 }
             </select>
-            <button class="inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 transition-colors"
+            <button class="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 transition-colors"
                     @onclick="LoadOrdersAsync">
                 Refresh
             </button>
@@ -76,43 +76,43 @@
 
     @* ── Summary Cards ── *@
     <div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total Orders</p>
-            <p class="mt-2 text-3xl font-bold text-gray-900">@_allOrders.Count</p>
+        <div class="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Orders</p>
+            <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">@AllOrders!.Count</p>
         </div>
-        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Total Revenue</p>
-            <p class="mt-2 text-3xl font-bold text-teal-600">@_allOrders.Sum(o => o.Total).ToString("C")</p>
+        <div class="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total Revenue</p>
+            <p class="mt-2 text-3xl font-bold text-primary-600 dark:text-primary-400">@AllOrders!.Sum(o => o.Total).ToString("C")</p>
         </div>
-        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Delivered</p>
-            <p class="mt-2 text-3xl font-bold text-green-600">@_allOrders.Count(o => o.Status == "Delivered")</p>
+        <div class="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Delivered</p>
+            <p class="mt-2 text-3xl font-bold text-green-600 dark:text-green-400">@AllOrders!.Count(o => o.Status == "Delivered")</p>
         </div>
-        <div class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
-            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Pending / Processing</p>
-            <p class="mt-2 text-3xl font-bold text-yellow-600">@_allOrders.Count(o => o.Status is "Pending" or "Processing")</p>
+        <div class="rounded-xl bg-white dark:bg-gray-800 p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Pending / Processing</p>
+            <p class="mt-2 text-3xl font-bold text-yellow-600 dark:text-yellow-400">@AllOrders!.Count(o => o.Status is "Pending" or "Processing")</p>
         </div>
     </div>
 
     @* ── Orders Table ── *@
-    <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+    <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                <thead class="bg-gray-50 dark:bg-gray-700/50">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Order ID</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Customer</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Order Date</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Status</th>
-                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">Items</th>
-                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500">Total</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Order ID</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Customer</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Order Date</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Items</th>
+                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Total</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100">
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                     @if (_filteredOrders.Count == 0)
                     {
                         <tr>
-                            <td colspan="6" class="px-4 py-10 text-center text-gray-400">
+                            <td colspan="6" class="px-4 py-10 text-center text-gray-400 dark:text-gray-500">
                                 No orders match the selected filter.
                             </td>
                         </tr>
@@ -121,18 +121,18 @@
                     {
                         @foreach (var order in _filteredOrders)
                         {
-                            <tr class="hover:bg-gray-50 transition-colors cursor-pointer @(_selectedOrder?.Id == order.Id ? "bg-teal-50" : "")"
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer @(_selectedOrder?.Id == order.Id ? "bg-primary-50 dark:bg-primary-900/20" : "")"
                                 @onclick="() => SelectOrder(order)">
-                                <td class="px-4 py-3 font-mono font-medium text-teal-700">@order.Id</td>
-                                <td class="px-4 py-3 font-medium text-gray-900">@order.Customer</td>
-                                <td class="px-4 py-3 text-gray-600">@order.OrderDate.ToString("MMM d, yyyy")</td>
+                                <td class="px-4 py-3 font-mono font-medium text-primary-700 dark:text-primary-300">@order.Id</td>
+                                <td class="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">@order.Customer</td>
+                                <td class="px-4 py-3 text-gray-600 dark:text-gray-400">@order.OrderDate.ToString("MMM d, yyyy")</td>
                                 <td class="px-4 py-3">
                                     <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold @StatusBadgeClass(order.Status)">
                                         @order.Status
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-gray-600">@order.Items.Count</td>
-                                <td class="px-4 py-3 text-right font-semibold text-gray-900">@order.Total.ToString("C")</td>
+                                <td class="px-4 py-3 text-gray-600 dark:text-gray-400">@order.Items.Count</td>
+                                <td class="px-4 py-3 text-right font-semibold text-gray-900 dark:text-gray-100">@order.Total.ToString("C")</td>
                             </tr>
                         }
                     }
@@ -144,52 +144,52 @@
     @* ── Order Detail Panel ── *@
     @if (_selectedOrder is not null)
     {
-        <div class="mt-6 rounded-xl border border-gray-200 bg-white shadow-sm p-6">
+        <div class="mt-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm p-6">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h2 class="text-lg font-bold text-gray-900">Order @_selectedOrder.Id</h2>
-                    <p class="text-sm text-gray-500">@_selectedOrder.Customer · @_selectedOrder.ContactEmail</p>
-                    <p class="text-sm text-gray-500 mt-1">@_selectedOrder.ShippingAddress</p>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Order @_selectedOrder.Id</h2>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">@_selectedOrder.Customer · @_selectedOrder.ContactEmail</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">@_selectedOrder.ShippingAddress</p>
                 </div>
-                <button class="text-gray-400 hover:text-gray-600 transition-colors" @onclick="() => _selectedOrder = null">
+                <button class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors" @onclick="() => _selectedOrder = null">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
-            <table class="min-w-full divide-y divide-gray-100 text-sm">
+            <table class="min-w-full divide-y divide-gray-100 dark:divide-gray-700 text-sm">
                 <thead>
-                    <tr class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    <tr class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                         <th class="pb-2 text-left">Product</th>
                         <th class="pb-2 text-right">Qty</th>
                         <th class="pb-2 text-right">Unit Price</th>
                         <th class="pb-2 text-right">Line Total</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-50">
+                <tbody class="divide-y divide-gray-50 dark:divide-gray-700">
                     @foreach (var item in _selectedOrder.Items)
                     {
                         <tr>
-                            <td class="py-2 text-gray-800">@item.ProductName <span class="text-gray-400 text-xs">(@item.ProductId)</span></td>
-                            <td class="py-2 text-right text-gray-700">@item.Quantity</td>
-                            <td class="py-2 text-right text-gray-700">@item.UnitPrice.ToString("C")</td>
-                            <td class="py-2 text-right font-medium text-gray-900">@item.LineTotal.ToString("C")</td>
+                            <td class="py-2 text-gray-800 dark:text-gray-200">@item.ProductName <span class="text-gray-400 dark:text-gray-500 text-xs">(@item.ProductId)</span></td>
+                            <td class="py-2 text-right text-gray-700 dark:text-gray-300">@item.Quantity</td>
+                            <td class="py-2 text-right text-gray-700 dark:text-gray-300">@item.UnitPrice.ToString("C")</td>
+                            <td class="py-2 text-right font-medium text-gray-900 dark:text-gray-100">@item.LineTotal.ToString("C")</td>
                         </tr>
                     }
                 </tbody>
                 <tfoot>
-                    <tr class="border-t border-gray-200 text-sm">
-                        <td colspan="3" class="pt-3 text-right font-medium text-gray-600">Subtotal</td>
-                        <td class="pt-3 text-right font-medium text-gray-800">@_selectedOrder.Subtotal.ToString("C")</td>
+                    <tr class="border-t border-gray-200 dark:border-gray-600 text-sm">
+                        <td colspan="3" class="pt-3 text-right font-medium text-gray-600 dark:text-gray-400">Subtotal</td>
+                        <td class="pt-3 text-right font-medium text-gray-800 dark:text-gray-200">@_selectedOrder.Subtotal.ToString("C")</td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-right font-medium text-gray-600">Tax</td>
-                        <td class="text-right font-medium text-gray-800">@_selectedOrder.Tax.ToString("C")</td>
+                        <td colspan="3" class="text-right font-medium text-gray-600 dark:text-gray-400">Tax</td>
+                        <td class="text-right font-medium text-gray-800 dark:text-gray-200">@_selectedOrder.Tax.ToString("C")</td>
                     </tr>
                     <tr class="text-base">
-                        <td colspan="3" class="pt-2 text-right font-bold text-gray-900">Total</td>
-                        <td class="pt-2 text-right font-bold text-teal-700">@_selectedOrder.Total.ToString("C")</td>
+                        <td colspan="3" class="pt-2 text-right font-bold text-gray-900 dark:text-white">Total</td>
+                        <td class="pt-2 text-right font-bold text-primary-700 dark:text-primary-300">@_selectedOrder.Total.ToString("C")</td>
                     </tr>
                 </tfoot>
             </table>
@@ -199,7 +199,9 @@
 </div>
 
 @code {
-    private List<SalesOrder> _allOrders = [];
+    [PersistentState]
+    public List<SalesOrder>? AllOrders { get; set; }
+
     private List<SalesOrder> _filteredOrders = [];
     private readonly List<string> _allStatuses = ["Delivered", "Shipped", "Processing", "Pending", "Cancelled"];
     private string _statusFilter = string.Empty;
@@ -208,7 +210,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadOrdersAsync();
+        if (AllOrders is null)
+        {
+            await LoadOrdersAsync();
+        }
+        else
+        {
+            _loading = false;
+            ApplyFilter();
+        }
     }
 
     private async Task LoadOrdersAsync()
@@ -219,11 +229,11 @@
         try
         {
             var orders = await Http.GetFromJsonAsync<List<SalesOrder>>("api/sales-orders");
-            _allOrders = orders ?? [];
+            AllOrders = orders ?? [];
         }
         catch
         {
-            _allOrders = [];
+            AllOrders = [];
         }
         finally
         {
@@ -234,9 +244,10 @@
 
     private void ApplyFilter()
     {
+        var source = AllOrders ?? [];
         _filteredOrders = string.IsNullOrEmpty(_statusFilter)
-            ? _allOrders
-            : _allOrders.Where(o => o.Status == _statusFilter).ToList();
+            ? source
+            : source.Where(o => o.Status == _statusFilter).ToList();
         _selectedOrder = null;
     }
 
@@ -247,11 +258,11 @@
 
     private static string StatusBadgeClass(string status) => status switch
     {
-        "Delivered"  => "bg-green-100 text-green-700",
-        "Shipped"    => "bg-blue-100 text-blue-700",
-        "Processing" => "bg-yellow-100 text-yellow-700",
-        "Pending"    => "bg-orange-100 text-orange-700",
-        "Cancelled"  => "bg-red-100 text-red-700",
-        _            => "bg-gray-100 text-gray-600"
+        "Delivered"  => "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
+        "Shipped"    => "bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300",
+        "Processing" => "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
+        "Pending"    => "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400",
+        "Cancelled"  => "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400",
+        _            => "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
     };
 }

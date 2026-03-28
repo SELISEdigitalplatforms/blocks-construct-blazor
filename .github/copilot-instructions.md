@@ -50,13 +50,13 @@ This app uses **Interactive Auto with per-page rendering**. Follow these rules s
 src/
 ├── Client/
 │   ├── Components/
-│   │   ├── Shared/          ← reusable UI (LoadingSpinner, PageHeader, etc.)
+│   │   ├── Shared/          ← reusable UI (ThemeToggle, LoadingSpinner, PageHeader, etc.)
 │   │   └── Forms/           ← form-specific components
 │   └── Pages/
 │       └── {Feature}/       ← one folder per feature, e.g. Auth/, Dashboard/
 │           └── {Feature}Page.razor
 ├── Server/
-│   ├── Components/Layout/   ← App.razor, MainLayout, Routes (SSR only)
+│   ├── Layout/              ← App.razor, MainLayout, Routes, ReconnectModal (SSR only)
 │   ├── Controllers/         ← [ApiController] REST endpoints
 │   └── Extensions/          ← DI registration (ServiceExtensions.cs)
 ├── Services/
@@ -71,11 +71,34 @@ src/
     └── Jobs/                ← one class per background job
 ```
 
+> **Why no `Components/` in Server?** The Server project only contains SSR shell files (`App.razor`, `MainLayout.razor`, `Routes.razor`, `ReconnectModal.razor`, `NotFound.razor`, `Error.razor`) — all placed directly in `src/Server/Layout/`. There is no `Components/` wrapper and no `Shared/` folder in Server. The `_Imports.razor` for the Server project lives at `src/Server/_Imports.razor` (project root level).
+
 ### HttpClient
 
 - **Server project**: Use `IHttpClientFactory` (`builder.Services.AddHttpClient()`). Never register `HttpClient` with `NavigationManager.BaseUri` — it breaks during SSR.
 - **Client project**: Register `HttpClient` with `builder.HostEnvironment.BaseAddress` for WASM-side API calls.
 - For authenticated API calls, add a `DelegatingHandler` that injects the auth token.
+
+#### SSR-compatible `HttpClient` (required for `InteractiveAuto` prerendering)
+
+Client components that call APIs via `HttpClient` during `OnInitializedAsync` will run on the **server** during SSR prerender. The Client's `HttpClient` (registered with `HostEnvironment.BaseAddress`) does not resolve on the server and will silently fail.
+
+Always register a scoped `HttpClient` in `Server/Program.cs` that uses the current request's host, so API calls work during SSR:
+
+```csharp
+// Server/Program.cs
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<HttpClient>(sp =>
+{
+    var ctx = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    var baseAddress = ctx is not null
+        ? $"{ctx.Request.Scheme}://{ctx.Request.Host}/"
+        : "http://localhost/";
+    return new HttpClient { BaseAddress = new Uri(baseAddress) };
+});
+```
+
+This replaces the plain `builder.Services.AddHttpClient()` for the scoped `HttpClient` used by Client components.
 
 ### Services Layer (`src/Services/`)
 
@@ -107,7 +130,81 @@ src/
 
 - Wrap `@Body` in `<ErrorBoundary>` in `MainLayout.razor` (already done).
 - Never expose `ex.Message` or stack traces to the user. Show generic messages; log details server-side.
-- Use `PersistentComponentState` to survive SSR → WASM handoff when needed.
+- Use `[PersistentState]` on component properties to survive SSR → WASM handoff when needed.
+
+---
+
+## Component Placement Rules — Client vs Server
+
+**All interactive UI components MUST live in `src/Client/`**, never in `src/Server/`.
+
+This is required because `InteractiveAutoRenderMode` needs the component to exist in the WASM (Client) assembly. If a component with `@rendermode InteractiveAuto` is placed in the Server project, it works on the initial Interactive Server circuit but **crashes with an unhandled exception** when Blazor switches to WASM — the component cannot be found in the WASM bundle.
+
+| What | Where |
+|------|-------|
+| All `@page` components | `src/Client/Pages/` |
+| All shared/reusable UI components (ThemeToggle, etc.) | `src/Client/Components/Shared/` |
+| Form components | `src/Client/Components/Forms/` |
+| SSR shell only (App, MainLayout, Routes, ReconnectModal) | `src/Server/Layout/` |
+
+To use a Client component from a Server layout file (e.g. `MainLayout.razor`), add `@using Client.Components.Shared` to `src/Server/_Imports.razor`. The Server project already references the Client project.
+
+---
+
+## [PersistentState] — SSR → WASM Handoff (.NET 10)
+
+For any `@page` component using `@rendermode InteractiveAuto` that **loads data in `OnInitializedAsync`**, use the `[PersistentState]` attribute on a **nullable public property** to avoid a double API call and loading flash. The framework serializes and restores it automatically — no subscriptions, no `IDisposable`, no manual JSON keys.
+
+### Rules
+
+1. **Declare the persisted data as a nullable public property** decorated with `[PersistentState]`.
+2. **Check for `null` in `OnInitializedAsync`** — `null` means SSR hasn't run yet (or failed), so fetch fresh data. Non-null means the value was restored from SSR.
+3. **No `IDisposable`, no subscription, no `_fetchSucceeded` flag** — the attribute handles everything.
+4. **Do not use the old `PersistentComponentState` service** — it is the low-level API that `[PersistentState]` replaces.
+
+### Pattern
+
+```razor
+@code {
+    [PersistentState]
+    public List<MyModel>? Items { get; set; }
+
+    private List<MyModel> _filteredItems = [];
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Items is null)
+        {
+            await LoadDataAsync();
+        }
+        else
+        {
+            _loading = false;
+            ApplyFilter();
+        }
+    }
+
+    private async Task LoadDataAsync()
+    {
+        _loading = true;
+        try
+        {
+            Items = await Http.GetFromJsonAsync<List<MyModel>>("api/my-endpoint") ?? [];
+        }
+        catch { Items = []; }
+        finally
+        {
+            _loading = false;
+            ApplyFilter();
+        }
+    }
+}
+```
+
+> Components that do **not** load data in `OnInitializedAsync` (e.g. pure UI, forms) do not need `[PersistentState]`.  
+> Components with `@rendermode @(new InteractiveAutoRenderMode(prerender: false))` do not need it either — they never prerender.  
+> For complex scenarios (fine-grained control over when/what is persisted), the low-level `PersistentComponentState` service is still available but should be a last resort.
 
 ---
 
@@ -190,7 +287,8 @@ public class SalesOrdersController(ISalesOrderService salesOrderService) : Contr
 | Item | Convention | Example |
 |------|-----------|---------|
 | Pages | PascalCase folder + `*Page.razor` | `Pages/Dashboard/DashboardPage.razor` |
-| Components | PascalCase under `Shared/` or `Forms/` | `Components/Shared/LoadingSpinner.razor` |
+| Components | PascalCase under `Client/Components/Shared/` or `Client/Components/Forms/` | `Components/Shared/ThemeToggle.razor` |
+| Server layout | Flat in `Server/Layout/` (no `Components/` wrapper) | `Server/Layout/MainLayout.razor` |
 | Services | Feature folder with interface + impl + model | `Services/SalesOrders/ISalesOrderService.cs` |
 | Controllers | `{Feature}Controller.cs` in `Server/Controllers/` | `Controllers/SalesOrdersController.cs` |
 | DI registration | `Server/Extensions/ServiceExtensions.cs` | `AddApplicationServices()` |
@@ -225,7 +323,8 @@ When creating a new page in `src/Client/Pages/`:
 3. Use Tailwind CSS utility classes for all styling (no `.razor.css`, no inline styles)
 4. Use `<EditForm>` (not `<form>`) for any forms
 5. Inject services via `@inject` — never `new` up services
-6. Add a corresponding test in `src/Test/Pages/` or `src/Test/Services/`
+6. If the page loads data in `OnInitializedAsync`, use `[PersistentState]` on a nullable public property (see pattern above) — check for `null` to distinguish first SSR render from WASM restore
+7. Add a corresponding test in `src/Test/Pages/` or `src/Test/Services/`
 
 ## Quick Reference — New API Endpoint Checklist
 
