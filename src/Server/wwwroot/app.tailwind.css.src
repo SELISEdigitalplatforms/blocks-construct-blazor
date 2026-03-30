@@ -2,13 +2,27 @@
 @source "../Client/**/*.razor";
 @source "../Components/**/*.razor";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ── Design Tokens ──────────────────────────────────────────────────────── */
 @theme {
 	/* Font */
 	--font-sans: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
 
-	/* Brand — Teal */
-	--color-primary:            hsl(179 100% 28%);
+	/* Brand — Primary color scale (blue) */
+	--color-primary-50:  #f0f4fb;
+	--color-primary-100: #d9e6f5;
+	--color-primary-200: #abc8eb;
+	--color-primary-300: #75a8df;
+	--color-primary-400: #4581c9;
+	--color-primary-500: #2c5a9e;
+	--color-primary-600: #254d86;
+	--color-primary-700: #1c3b66;
+	--color-primary-800: #132846;
+	--color-primary-900: #0a1627;
+
+	/* Brand — semantic shorthand (keeps existing components working) */
+	--color-primary:            #008f8c;
 	--color-primary-foreground: hsl(0 0% 100%);
 
 	/* Semantic surfaces */
