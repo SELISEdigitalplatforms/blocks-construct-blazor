@@ -136,4 +136,4 @@ jobs:
           --set image.repository=${{ secrets.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ inputs.CONTAINER_NAME }} \
           --set image.tag=${{ github.sha }} \
           --set fullnameOverride=${{inputs.CONTAINER_NAME}} \
-          --set ingress.hosts[0].paths[0].path="/"
+          --set ingress.hosts[0].paths[0].path=/
