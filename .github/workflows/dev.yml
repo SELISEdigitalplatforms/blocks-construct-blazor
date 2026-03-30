@@ -29,7 +29,7 @@ jobs:
       DEPENDENCY_TRACK_API_KEY: ${{ secrets.DEPENDENCY_TRACK_API_KEY }}
     needs: [initialization]
 
-cd-job:
+  cd-job:
   permissions:
     contents: read
     id-token: write
