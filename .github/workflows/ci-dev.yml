@@ -75,7 +75,7 @@ jobs:
       # Load shared variables first (if enabled)
       - name: Load Shared Configuration
         if: env.LOAD_CUSTOM_VARS == 'true'
-        uses: SELISEdigitalplatforms/l0-yml-devops-workflow/.github/actions/setvars@main
+        uses: SELISEdigitalplatforms/blocks-inventory/.github/actions/setvars@main
         with:
           varFilePath: ./.github/variables/
 
@@ -149,7 +149,7 @@ jobs:
   # pr-checks:
   #     if: github.event_name == 'pull_request' && needs.initialization.outputs.run_tests == 'true'
   #     needs: [initialization]
-  #     uses: SELISEdigitalplatforms/l0-yml-devops-workflow/.github/workflows/test-dotnet.yml@main
+  #     uses: SELISEdigitalplatforms/blocks-inventory/.github/workflows/test-dotnet.yml@main
   #     with:
   #         SERVICE_NAME: ${{ needs.initialization.outputs.service_name }}
   #         LOAD_CUSTOM_VARS: ${{ needs.initialization.outputs.load_custom_vars == 'true' }}
@@ -161,7 +161,7 @@ jobs:
     # if: github.event_name == 'pull_request' && needs.initialization.outputs.run_sonarqube == 'true'
     if: needs.initialization.outputs.run_sonarqube == 'true'
     needs: [initialization]
-    uses: SELISEdigitalplatforms/l0-yml-devops-workflow/.github/workflows/sonarqube-dotnet.yml@main
+    uses: SELISEdigitalplatforms/blocks-inventory/.github/workflows/sonarqube-dotnet.yml@main
     with:
       SOLUTION_NAME: ${{ needs.initialization.outputs.solution_name }}
       SONARQUBE_HOST: ${{ needs.initialization.outputs.sonarqube_host }}
@@ -191,7 +191,7 @@ jobs:
   sca-scan-dotnet:
     if: needs.initialization.outputs.run_sca_scan == 'true'
     needs: [initialization]
-    uses: SELISEdigitalplatforms/l0-yml-devops-workflow/.github/workflows/sca-scan-dotnet.yml@main
+    uses: SELISEdigitalplatforms/blocks-inventory/.github/workflows/sca-scan-dotnet.yml@main
     with:
       # Project Configuration
       PROJECT_NAME: ${{ needs.initialization.outputs.project_name }}
@@ -236,7 +236,7 @@ jobs:
       always() &&
       needs.initialization.result == 'success' &&
       (needs.sonarqube.result == 'success' || needs.sonarqube.result == 'skipped')
-    uses: SELISEdigitalplatforms/l0-yml-devops-workflow/.github/workflows/build-push.yml@main
+    uses: SELISEdigitalplatforms/blocks-inventory/.github/workflows/build-push.yml@main
     with:
       SERVICE_NAME: ${{ needs.initialization.outputs.service_name }}
       # SERVICE_TYPE: ${{ needs.initialization.outputs.service_type }}
@@ -261,7 +261,7 @@ jobs:
       always() &&
       needs.initialization.result == 'success' &&
       needs.build.result == 'success'
-    uses: SELISEdigitalplatforms/l0-yml-devops-workflow/.github/workflows/update-gitops.yml@main
+    uses: SELISEdigitalplatforms/blocks-inventory/.github/workflows/update-gitops-central.yml@main
     with:
       SERVICE_NAME: ${{ needs.initialization.outputs.service_name }}
       SERVICE_TYPE: "webservice" # Match the service type from build job
