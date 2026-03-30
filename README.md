@@ -214,7 +214,7 @@ public class SalesOrdersController(ISalesOrderService service) : ControllerBase
 - Write inline `style="..."`
 - Use other CSS frameworks
 
-**Source:** [src/Server/wwwroot/app.tailwind.css](src/Server/wwwroot/app.tailwind.css)
+**Source:** [src/Server/wwwroot/app.tailwind.css.src](src/Server/wwwroot/app.tailwind.css.src)
 
 ```css
 @import "tailwindcss";
@@ -231,7 +231,7 @@ public class SalesOrdersController(ISalesOrderService service) : ControllerBase
 }
 ```
 
-**Build:** `dotnet build` (compiled to `app.css` via MSBuild)
+**Build:** `dotnet build` (compiled to `app.tailwind.css` via MSBuild)
 
 ### Error Handling & Security
 
