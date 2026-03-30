@@ -4,17 +4,17 @@
 @inject LanguageState Lang
 @implements IDisposable
 
-<PageTitle>@T("MY_PROFILE")</PageTitle>
+<PageTitle>@Tr("MY_PROFILE", "My Profile")</PageTitle>
 <RequireClientAuth />
 
 <div class="flex w-full flex-col">
     <div class="mb-5 flex items-center">
-        <h1 class="text-2xl font-bold tracking-tight text-high-emphasis">@T("MY_PROFILE")</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-high-emphasis">@Tr("MY_PROFILE", "My Profile")</h1>
     </div>
 
     <div class="mb-6 flex gap-2 border-b">
-        <button @onclick='() => _tab = "general"' class="border-b-2 pb-2 px-1 text-sm font-medium transition-colors @(_tab == "general" ? "border-primary text-primary" : "border-transparent text-medium-emphasis hover:text-high-emphasis")">@T("GENERAL_INFO")</button>
-        <button @onclick='() => _tab = "devices"' class="border-b-2 pb-2 px-1 text-sm font-medium transition-colors @(_tab == "devices" ? "border-primary text-primary" : "border-transparent text-medium-emphasis hover:text-high-emphasis")">@T("DEVICES")</button>
+        <button @onclick='() => _tab = "general"' class="border-b-2 pb-2 px-1 text-sm font-medium transition-colors @(_tab == "general" ? "border-primary text-primary" : "border-transparent text-medium-emphasis hover:text-high-emphasis")">@Tr("GENERAL_INFO", "General Info")</button>
+        <button @onclick='() => _tab = "devices"' class="border-b-2 pb-2 px-1 text-sm font-medium transition-colors @(_tab == "devices" ? "border-primary text-primary" : "border-transparent text-medium-emphasis hover:text-high-emphasis")">@Tr("DEVICES", "Devices")</button>
     </div>
 
     @if (_tab == "general")

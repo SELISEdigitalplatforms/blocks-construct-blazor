@@ -66,6 +66,13 @@
 
                 <div class="my-1 border-t"></div>
 
+                <div class="flex items-center justify-between px-4 py-2">
+                    <span class="text-xs text-medium-emphasis">@Tr("THEME", "Theme")</span>
+                    <ThemeToggle />
+                </div>
+
+                <div class="my-1 border-t"></div>
+
                 <button @onclick="HandleLogout"
                         class="flex w-full items-center gap-2 px-4 py-2 text-left font-medium text-red-600 transition-colors hover:bg-red-50"
                         role="menuitem"
