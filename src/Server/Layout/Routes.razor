@@ -1,0 +1,12 @@
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client._Imports).Assembly }" NotFoundPage="typeof(NotFound)">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
+            <NotAuthorized>
+                <div class="flex items-center justify-center gap-4 py-24 text-center">
+                    <p class="text-medium-emphasis">You need to be logged in. <NavLink href="/login" class="text-primary hover:underline">Go to login</NavLink></p>
+                </div>
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

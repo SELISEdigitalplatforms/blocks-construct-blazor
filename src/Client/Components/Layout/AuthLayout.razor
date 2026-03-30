@@ -2,8 +2,9 @@
 @inject NavigationManager Nav
 
 <div class="min-h-screen flex items-center justify-center @BackgroundClass px-4">
-    <div class="fixed right-4 top-4 z-20">
+    <div class="fixed right-4 top-4 z-20 flex items-center gap-2">
         <LanguageSwitcher @rendermode="InteractiveAuto" />
+        <ThemeToggle @rendermode="@(new InteractiveAutoRenderMode(prerender: false))" />
     </div>
 
     <div class="w-full max-w-md">
