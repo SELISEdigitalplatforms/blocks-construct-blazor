@@ -24,7 +24,7 @@ env:
   # Quality Checks
   # ========================================
   RUN_TESTS: "false" # Usually disabled in dev for speed
-  RUN_SONARQUBE: "true" # Enable for testing the new dotnet-coverage integration
+  RUN_SONARQUBE: "false" # Enable for testing the new dotnet-coverage integration
   RUN_SCA_SCAN: "false" # Enable SCA Scan for dependency analysis
 
   # ========================================
