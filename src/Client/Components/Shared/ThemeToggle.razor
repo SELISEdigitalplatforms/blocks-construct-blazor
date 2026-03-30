@@ -35,13 +35,14 @@
 </div>
 
 @code {
-    private string _current = "system";
+    private string _current = "light";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _current = await JS.InvokeAsync<string?>("themeManager.get") ?? "system";
+            _current = await JS.InvokeAsync<string?>("themeManager.get") ?? "light";
+            await JS.InvokeVoidAsync("themeManager.applyCurrent");
             StateHasChanged();
         }
     }

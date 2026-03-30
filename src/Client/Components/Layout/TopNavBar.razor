@@ -23,6 +23,7 @@
 
     <div class="flex items-center gap-1 sm:gap-2">
         <LanguageSwitcher />
+        <ThemeToggle @rendermode="@(new InteractiveAutoRenderMode(prerender: false))" />
 
         <button class="relative rounded-full p-2 text-medium-emphasis transition-colors hover:bg-muted"
                 aria-label="Notifications"

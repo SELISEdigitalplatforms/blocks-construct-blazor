@@ -21,8 +21,8 @@
 	--color-primary-800: #132846;
 	--color-primary-900: #0a1627;
 
-	/* Brand — semantic shorthand (keeps existing components working) */
-	--color-primary:            #008f8c;
+	/* Brand — semantic shorthand mapped to login blue palette */
+	--color-primary:            #2c5a9e;
 	--color-primary-foreground: hsl(0 0% 100%);
 
 	/* Semantic surfaces */
@@ -34,7 +34,7 @@
 	--color-muted-foreground: hsl(240 3.8% 46.1%);
 	--color-border:           hsl(240 5.9% 90%);
 	--color-input:            hsl(240 5.9% 90%);
-	--color-ring:             hsl(179 100% 28%);
+	--color-ring:             #2c5a9e;
 	--color-destructive:      hsl(0 84.2% 60.2%);
 
 	/* Text emphasis hierarchy */
@@ -61,18 +61,20 @@
 }
 
 /* ── Dark Mode Overrides ────────────────────────────────────────────────── */
+/* Aligned to Tailwind's cool gray scale so `dark:bg-gray-*` classes and    */
+/* semantic tokens render the same surface tone — no warm-vs-cool mismatch. */
 .dark {
-	--color-background:       hsl(20 14.3% 4.1%);
-	--color-foreground:       hsl(0 0% 95%);
-	--color-card:             hsl(24 9.8% 10%);
-	--color-card-foreground:  hsl(0 0% 95%);
-	--color-muted:            hsl(0 0% 15%);
-	--color-muted-foreground: hsl(240 5% 64.9%);
-	--color-border:           hsl(240 3.7% 15.9%);
-	--color-input:            hsl(240 3.7% 15.9%);
-	--color-high-emphasis:    hsl(0 0% 100%);
-	--color-medium-emphasis:  hsl(0 0% 69%);
-	--color-low-emphasis:     hsl(0 0% 82%);
+	--color-background:       #111827;   /* gray-900 */
+	--color-foreground:       #f9fafb;   /* gray-50  */
+	--color-card:             #1f2937;   /* gray-800 */
+	--color-card-foreground:  #f9fafb;   /* gray-50  */
+	--color-muted:            #374151;   /* gray-700 */
+	--color-muted-foreground: #9ca3af;   /* gray-400 */
+	--color-border:           #374151;   /* gray-700 */
+	--color-input:            #374151;   /* gray-700 */
+	--color-high-emphasis:    #ffffff;
+	--color-medium-emphasis:  #d1d5db;   /* gray-300 */
+	--color-low-emphasis:     #9ca3af;   /* gray-400 */
 }
 
 /* ── Base Styles ────────────────────────────────────────────────────────── */
@@ -94,6 +96,19 @@
 		background-color: var(--color-background);
 		color: var(--color-foreground);
 		-webkit-font-smoothing: antialiased;
+	}
+
+	input,
+	select,
+	textarea {
+		background-color: var(--color-card);
+		color: var(--color-high-emphasis);
+		border-color: var(--color-input);
+	}
+
+	input::placeholder,
+	textarea::placeholder {
+		color: var(--color-medium-emphasis);
 	}
 }
 

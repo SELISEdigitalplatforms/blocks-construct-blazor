@@ -14,32 +14,82 @@
     @* Runs before Blazor hydrates — applies saved theme class to <html> without flash *@
     <script>
         (function () {
-            function applyTheme(theme) {
-                if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
+            var THEME_KEY = 'theme';
+            var media = window.matchMedia('(prefers-color-scheme: dark)');
+
+            function getCookie(name) {
+                var key = name + '=';
+                var parts = document.cookie ? document.cookie.split(';') : [];
+                for (var i = 0; i < parts.length; i++) {
+                    var p = parts[i].trim();
+                    if (p.indexOf(key) === 0) return decodeURIComponent(p.substring(key.length));
+                }
+                return null;
+            }
+
+            function normalizeTheme(theme) {
+                return theme === 'dark' || theme === 'light' || theme === 'system' ? theme : 'light';
+            }
+
+            function getStoredTheme() {
+                try {
+                    return normalizeTheme(localStorage.getItem(THEME_KEY) || getCookie(THEME_KEY) || 'light');
+                } catch {
+                    return normalizeTheme(getCookie(THEME_KEY) || 'light');
                 }
             }
-            var saved = localStorage.getItem('theme') || 'system';
-            applyTheme(saved);
-            if (saved === 'system') {
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
-                    if (localStorage.getItem('theme') === 'system') applyTheme('system');
-                });
+
+            function persistTheme(theme) {
+                var normalized = normalizeTheme(theme);
+                try {
+                    localStorage.setItem(THEME_KEY, normalized);
+                } catch { }
+                document.cookie = THEME_KEY + '=' + encodeURIComponent(normalized) + '; path=/; max-age=31536000; samesite=lax';
             }
+
+            function applyTheme(theme) {
+                var normalized = normalizeTheme(theme);
+                var effectiveDark = normalized === 'dark' || (normalized === 'system' && media.matches);
+                var root = document.documentElement;
+
+                root.setAttribute('data-theme', normalized);
+                if (effectiveDark) {
+                    root.classList.add('dark');
+                    root.style.colorScheme = 'dark';
+                } else {
+                    root.classList.remove('dark');
+                    root.style.colorScheme = 'light';
+                }
+            }
+
+            var saved = getStoredTheme();
+            applyTheme(saved);
+
+            media.addEventListener('change', function () {
+                if (getStoredTheme() === 'system') applyTheme('system');
+            });
+
+            window.addEventListener('pageshow', function () {
+                applyTheme(getStoredTheme());
+            });
+
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) {
+                    applyTheme(getStoredTheme());
+                }
+            });
+
             window.themeManager = {
                 set: function (theme) {
-                    localStorage.setItem('theme', theme);
-                    applyTheme(theme);
-                    if (theme === 'system') {
-                        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
-                            if (localStorage.getItem('theme') === 'system') applyTheme('system');
-                        });
-                    }
+                    var normalized = normalizeTheme(theme);
+                    persistTheme(normalized);
+                    applyTheme(normalized);
                 },
                 get: function () {
-                    return localStorage.getItem('theme') || 'system';
+                    return getStoredTheme();
+                },
+                applyCurrent: function () {
+                    applyTheme(getStoredTheme());
                 }
             };
         })();
@@ -50,6 +100,24 @@
     <Routes />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script>
+        (function () {
+            function reapplyTheme() {
+                if (window.themeManager && typeof window.themeManager.applyCurrent === 'function') {
+                    window.themeManager.applyCurrent();
+                }
+            }
+
+            if (window.Blazor && typeof window.Blazor.addEventListener === 'function') {
+                window.Blazor.addEventListener('enhancedload', reapplyTheme);
+                window.Blazor.addEventListener('enhancednavigationend', reapplyTheme);
+            }
+
+            // Fallback for cases where navigation events are unavailable.
+            window.addEventListener('popstate', reapplyTheme);
+            window.addEventListener('hashchange', reapplyTheme);
+        })();
+    </script>
 </body>
 
 </html>
