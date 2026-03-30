@@ -1,0 +1,57 @@
+name: Run Tests
+
+on: workflow_call
+jobs:
+  build:
+    name: Test Execution
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  
+
+    - name: Set Environment Variables
+      uses: ./.github/actions/setvars
+      with:
+        varFilePath: ./.github/variables/vars.env
+
+    - name: Initialize dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          2.1.x
+          3.1.x
+          6.0.x
+
+    - name: Install coverlet.console
+      run: dotnet tool install --global coverlet.console
+      
+    - name: Find test projects
+      id: find-projects
+      run: |
+        test_projects=$(find . -type f \( -name '*Test.csproj' -o -name '*Tests.csproj' -o -name 'Test*.csproj' \) -exec dirname {} \;)
+        test_projects=${test_projects//$'\n'/ }
+        test_projects=${test_projects//.\/SelectNetwork.PackageService\//.\/}
+        echo projects="$test_projects" >> $GITHUB_OUTPUT
+    
+    - name: Run Tests
+      working-directory: ./SelectNetwork.PackageService
+      shell: bash
+      run: |
+        dotnet restore "./${{ env.SOLUTION_NAME }}" -s https://api.nuget.org/v3/index.json -s https://nuget.selise.biz/nuget
+        dotnet build "./${{ env.SOLUTION_NAME }}" --no-incremental
+        
+        for project in ${{ steps.find-projects.outputs.projects }}; do
+          dotnet test "$project" --no-build --verbosity normal --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+        done
+
+    - name: List all files
+      run: |
+        find . -type f
+
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v2.9.0
+      if: always()
+      with:
+        files: "**/*.trx"

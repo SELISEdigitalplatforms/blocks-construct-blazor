@@ -1,0 +1,51 @@
+name: Build (main-aks)
+
+on:
+  push:
+    branches:
+      - main-aks
+
+env:
+  RUN_UNIT_TEST: "false"
+  RUN_SONARQUBE: "false"
+
+jobs:
+  initialization:
+    runs-on: ubuntu-latest
+    outputs:
+      envvalue1: ${{ steps.setvar.outputs.envvar1 }}
+      envvalue2: ${{ steps.setvar.outputs.envvar2 }}
+    steps:
+      - name: set value
+        id: setvar
+        run: |
+          echo envvar1="$RUN_UNIT_TEST" >> $GITHUB_OUTPUT
+          echo envvar2="$RUN_SONARQUBE" >> $GITHUB_OUTPUT 
+          
+  test-job:
+    if: ${{ needs.initialization.outputs.envvalue1=='true' }}
+    uses: ./.github/workflows/1_test.yml
+    needs: [initialization]
+
+  sonarqube-job:
+    if: ${{ success() && needs.initialization.outputs.envvalue2=='true' }}
+    uses: ./.github/workflows/2_sonar.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_GLOBAL }}
+    needs: [test-job]
+
+  cd-job:
+    if: ${{ github.event_name == 'push' && (success() || (needs.initialization.outputs.envvalue1=='false' && needs.initialization.outputs.envvalue2=='false')) }}
+    uses: ./.github/workflows/3_web.yml
+    with:
+      CONTAINER_NAME: "prod-business-selectnetwork-package"
+      NAMESPACE: "prod-l3-net-sln-package"
+      SERVICE_NAME: "business-selectnetwork-package"
+    secrets:
+      SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_CREDENTIALS }}
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.SHARED_CONTAINER_REGISTRY }}
+      ClUSTER_RESOURCE_GROUP: ${{ secrets.AKS_PROD_RESOURCE_GROUP }}
+      CLUSTER_NAME: ${{ secrets.AKS_SHARED_PROD_CLUSTER }}
+      ACR_RESOURCE_GROUP: ${{ secrets.AKS_PROD_RESOURCE_GROUP }}
+    needs: [sonarqube-job]
