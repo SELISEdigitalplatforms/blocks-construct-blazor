@@ -1,6 +1,6 @@
 @page "/login"
 @rendermode @(new InteractiveAutoRenderMode(prerender: false))
-@layout AuthLayout
+@layout FullPageLayout
 @inject IAuthService AuthService
 @inject ISsoService SsoService
 @inject AppAuthStateProvider AuthState
@@ -8,70 +8,127 @@
 @inject LanguageState Lang
 @implements IDisposable
 
-<PageTitle>@T("LOG_IN")</PageTitle>
-
-<div class="flex flex-col gap-6">
-    <div>
-        <h1 class="text-2xl font-bold text-high-emphasis">@T("LOG_IN")</h1>
-        <div class="mt-1 flex items-center gap-1">
-            <span class="text-sm font-normal text-medium-emphasis">@T("DONT_HAVE_ACCOUNT")</span>
-            <a href="/signup" class="text-sm font-bold text-primary hover:underline">@T("SIGN_UP")</a>
+<div class="flex min-h-screen">
+    @* Left branding panel — hidden on small screens *@
+    <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary-700 via-primary-500 to-primary-800 flex-col justify-between p-12 text-white">
+        <div>
+            <div class="flex items-center gap-3 mb-16">
+                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <span class="text-xl font-bold tracking-tight">Blocks Platform</span>
+            </div>
+            <h1 class="text-4xl xl:text-5xl font-extrabold leading-tight mb-6">
+                Build with confidence.
+            </h1>
+            <p class="text-lg text-primary-100 max-w-md leading-relaxed">
+                A secure, scalable enterprise platform to accelerate your digital transformation.
+            </p>
         </div>
+        <p class="text-sm text-primary-200">&copy; @DateTime.Now.Year Blocks Platform. All rights reserved.</p>
     </div>
 
-    @if (!string.IsNullOrEmpty(_errorMessage))
-    {
-        <div class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
-            <strong>@T("INVALID_CREDENTIALS")</strong> @_errorMessage
+    @* Right login form panel *@
+    <div class="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-900 px-6 py-12 sm:px-12 transition-colors duration-300">
+        <div class="w-full max-w-md">
+            @* Mobile logo *@
+            <div class="flex items-center gap-2 mb-10 lg:hidden">
+                <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <span class="text-lg font-bold text-gray-900 dark:text-white tracking-tight">Blocks Platform</span>
+            </div>
+
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Sign in to your account</h2>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Enter your credentials to access the platform.</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <div class="mt-6 flex items-start gap-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4" role="alert">
+                    <svg class="mt-0.5 h-5 w-5 shrink-0 text-red-500 dark:text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                    </svg>
+                    <p class="text-sm text-red-700 dark:text-red-400">@_errorMessage</p>
+                </div>
+            }
+
+            @if (_loginOptions == null || _loginOptions.PasswordGrantAllowed)
+            {
+                <EditForm Model="_model" OnValidSubmit="HandleLogin" FormName="login" class="mt-8 space-y-5">
+                    <DataAnnotationsValidator />
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">@T("EMAIL")</label>
+                        <InputText
+                            id="email"
+                            @bind-Value="_model.Username"
+                            type="email"
+                            placeholder="@T("ENTER_YOUR_EMAIL_ADDRESS")"
+                            disabled="@_isLoading"
+                            class="mt-1.5 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 shadow-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-700 transition" />
+                        <ValidationMessage For="@(() => _model.Username)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">@T("PASSWORD")</label>
+                            <a href="/forgot-password" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition">@T("FORGOT_PASSWORD")</a>
+                        </div>
+                        <InputText
+                            id="password"
+                            @bind-Value="_model.Password"
+                            type="password"
+                            placeholder="@T("ENTER_YOUR_PASSWORD")"
+                            disabled="@_isLoading"
+                            class="mt-1.5 block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2.5 text-sm text-gray-900 dark:text-gray-100 shadow-sm placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-700 transition" />
+                        <ValidationMessage For="@(() => _model.Password)" class="mt-1 text-xs text-red-600 dark:text-red-400" />
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled="@_isLoading"
+                        class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                        @if (_isLoading)
+                        {
+                            <svg class="h-4 w-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                            </svg>
+                            <span>@T("LOADING")</span>
+                        }
+                        else
+                        {
+                            <span>@T("LOG_IN")</span>
+                        }
+                    </button>
+                </EditForm>
+            }
+
+            @if (_loginOptions?.PasswordGrantAllowed == true && _loginOptions?.SocialGrantAllowed == true)
+            {
+                <div class="my-6 flex items-center gap-3">
+                    <div class="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
+                    <span class="text-xs font-medium text-gray-400 dark:text-gray-500">OR</span>
+                    <div class="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
+                </div>
+            }
+
+            @if (_loginOptions?.SocialGrantAllowed == true)
+            {
+                <SsoButtons LoginOptions="_loginOptions" />
+            }
+
+            <p class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                @T("DONT_HAVE_ACCOUNT") <a href="/signup" class="font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition">@T("SIGN_UP")</a>
+            </p>
         </div>
-    }
-
-    @if (_loginOptions == null || _loginOptions.PasswordGrantAllowed)
-    {
-        <EditForm Model="_model" OnValidSubmit="HandleLogin" class="flex flex-col gap-4">
-            <DataAnnotationsValidator />
-
-            <div class="flex flex-col gap-1">
-                <label class="text-sm font-normal text-high-emphasis">@T("EMAIL")</label>
-                <InputText @bind-Value="_model.Username"
-                           class="w-full rounded-md border border-input px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                           placeholder="@T("ENTER_YOUR_EMAIL_ADDRESS")" />
-                <ValidationMessage For="@(() => _model.Username)" class="text-xs text-destructive" />
-            </div>
-
-            <div class="flex flex-col gap-1">
-                <label class="text-sm font-normal text-high-emphasis">@T("PASSWORD")</label>
-                <PasswordInput @bind-Value="_model.Password" Placeholder="@T("ENTER_YOUR_PASSWORD")" />
-                <ValidationMessage For="@(() => _model.Password)" class="text-xs text-destructive" />
-            </div>
-
-            <div class="flex justify-end">
-                <a href="/forgot-password" class="text-sm text-primary hover:text-primary-600 hover:underline">
-                    @T("FORGOT_PASSWORD")
-                </a>
-            </div>
-
-            <button type="submit"
-                    class="w-full rounded-md bg-primary py-2.5 text-sm font-extrabold text-white disabled:opacity-50 hover:bg-primary/90 transition-colors"
-                    disabled="@_isLoading">
-                @(_isLoading ? T("LOADING") : T("LOG_IN"))
-            </button>
-        </EditForm>
-    }
-
-    @if (_loginOptions?.PasswordGrantAllowed == true && _loginOptions?.SocialGrantAllowed == true)
-    {
-        <div class="flex items-center gap-3">
-            <div class="flex-1 border-t border-border"></div>
-            <span class="text-xs font-medium text-low-emphasis">OR</span>
-            <div class="flex-1 border-t border-border"></div>
-        </div>
-    }
-
-    @if (_loginOptions?.SocialGrantAllowed == true)
-    {
-        <SsoButtons LoginOptions="_loginOptions" />
-    }
+    </div>
 </div>
 
 @code {
@@ -92,7 +149,7 @@
         var token = await AuthService.GetAccessTokenAsync();
         if (!string.IsNullOrEmpty(token))
         {
-            Nav.NavigateTo("/", replace: true);
+            Nav.NavigateTo("/identity-management", replace: true);
             return;
         }
 
@@ -116,7 +173,7 @@
             }
 
             AuthState.NotifyAuthStateChanged();
-            Nav.NavigateTo("/", replace: true);
+            Nav.NavigateTo("/identity-management", replace: true);
         }
         catch
         {
@@ -145,4 +202,5 @@
     {
         Lang.OnChange -= HandleLanguageChanged;
     }
+
 }

@@ -25,12 +25,12 @@
     <div class="flex h-14 shrink-0 items-center border-b px-2">
            <img src="/logo.png"
              alt="Logo"
-             class="h-8 w-auto max-w-full object-contain transition-all duration-300
+                         class="h-8 w-auto max-w-full object-contain transition-all duration-300 dark:invert dark:brightness-0
                     @(Sidebar.IsOpen ? "opacity-100" : "opacity-0 pointer-events-none hidden lg:block lg:opacity-0")" />
 
            <img src="/logo.png"
              alt="Logo"
-               class="mx-auto h-8 w-8 rounded object-contain transition-all duration-300
+                             class="mx-auto h-8 w-8 rounded object-contain transition-all duration-300 dark:invert dark:brightness-0
                     @(Sidebar.IsOpen ? "opacity-0 hidden" : "lg:opacity-100 lg:block hidden")" />
 
         <button @onclick="Sidebar.CloseMobile"

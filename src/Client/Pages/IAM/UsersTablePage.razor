@@ -4,12 +4,12 @@
 @inject LanguageState Lang
 @implements IDisposable
 
-<PageTitle>@Tr("IDENTITY_ACCESS_MANAGEMENT", "Identity & Access Management")</PageTitle>
+<PageTitle>@T("IDENTITY_ACCESS_MANAGEMENT")</PageTitle>
 <RequireClientAuth />
 
 <div class="flex h-full w-full flex-col gap-6">
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold tracking-tight text-high-emphasis">@Tr("IDENTITY_ACCESS_MANAGEMENT", "Identity & Access Management")</h1>
+        <h1 class="text-2xl font-bold tracking-tight text-high-emphasis">@T("IDENTITY_ACCESS_MANAGEMENT")</h1>
         <AuthorizeView Roles="admin">
             <Authorized>
                 <button class="rounded bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90" @onclick="() => _showAddUser = true">@T("ADD_USER")</button>

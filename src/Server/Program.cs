@@ -53,11 +53,24 @@ builder.Services
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, AppAuthStateProvider>();
 builder.Services.AddScoped<AppAuthStateProvider>();
-builder.Services.AddScoped<SidebarState>();
+builder.Services.AddSingleton<SidebarState>();
 builder.Services.AddScoped<LanguageState>();
 builder.Services.AddTransient<AuthTokenHandler>();
 
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
+
+// Scoped HttpClient used by Client components during SSR prerender.
+// Uses the current request's scheme+host so relative API paths resolve correctly.
+builder.Services.AddScoped<HttpClient>(sp =>
+{
+    var ctx = sp.GetRequiredService<IHttpContextAccessor>().HttpContext;
+    var baseAddress = ctx is not null
+        ? $"{ctx.Request.Scheme}://{ctx.Request.Host}/"
+        : "http://localhost/";
+    return new HttpClient { BaseAddress = new Uri(baseAddress) };
+});
+
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;

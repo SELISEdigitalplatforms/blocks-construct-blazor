@@ -22,12 +22,6 @@
         <div class="rounded border border-red-200 bg-red-50 p-3 text-sm text-red-700">@_error</div>
     }
 
-    @if (_isEdit && _isLoadingItem)
-    {
-        <div class="flex h-40 items-center justify-center"><LoadingSpinner /></div>
-    }
-    else
-    {
     <div class="rounded-lg bg-card p-6 shadow-sm">
         <EditForm Model="_model" OnValidSubmit="HandleSubmit" class="flex flex-col gap-6">
             <DataAnnotationsValidator />
@@ -79,7 +73,6 @@
             </div>
         </EditForm>
     </div>
-    }
 </div>
 
 @code {
@@ -89,7 +82,6 @@
     private InventoryFormModel _model = new();
     private string _error = "";
     private bool _saving;
-    private bool _isLoadingItem;
 
     protected override void OnInitialized()
     {
@@ -102,8 +94,6 @@
 
         if (_isEdit)
         {
-            _isLoadingItem = true;
-            await InvokeAsync(StateHasChanged);
             await LoadItemForEdit();
         }
     }
@@ -128,15 +118,12 @@
                     EligibleReplacement = item.EligibleReplacement,
                     Discount = item.Discount
                 };
+                await InvokeAsync(StateHasChanged);
             }
         }
         catch (Exception ex)
         {
             _error = $"{Tr("ERROR_LOADING_DATA", "Failed to load item:")} {ex.Message}";
-        }
-        finally
-        {
-            _isLoadingItem = false;
             await InvokeAsync(StateHasChanged);
         }
     }

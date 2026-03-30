@@ -8,7 +8,7 @@
 
     var linkBase = "flex items-center w-full gap-0 rounded-md px-2 py-2 text-base font-normal transition-colors";
     var activeClass = itemActive
-        ? "bg-surface text-primary"
+        ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300"
         : "text-high-emphasis hover:bg-muted hover:text-high-emphasis";
 }
 
@@ -39,7 +39,7 @@
                     var childActive = _currentPath.StartsWith(child.Path, StringComparison.OrdinalIgnoreCase);
                     <button @onclick='() => NavigateTo(child.Path)'
                             type="button"
-                       class="flex items-center gap-3 rounded-md px-2 py-1.5 text-sm transition-colors @(childActive ? "text-primary font-medium" : "text-medium-emphasis hover:text-high-emphasis hover:bg-muted")">
+                       class="flex items-center gap-3 rounded-md px-2 py-1.5 text-sm transition-colors @(childActive ? "bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 font-medium" : "text-medium-emphasis hover:text-high-emphasis hover:bg-muted")">
                         @if (!string.IsNullOrEmpty(child.Icon))
                         {
                             <span class="flex h-4 w-4 items-center justify-center">
