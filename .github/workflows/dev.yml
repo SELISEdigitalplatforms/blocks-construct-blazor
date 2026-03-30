@@ -30,20 +30,20 @@ jobs:
     needs: [initialization]
 
   cd-job:
-  permissions:
-    contents: read
-    id-token: write
-  if: ${{ github.event_name == 'push' }}
-  uses: ./.github/workflows/3_web.yml
-  with:
-    CONTAINER_NAME: 'dev-${{ env.SERVICE_NAME }}-webclient'
-    NAMESPACE: 'dev-${{ env.REPO_NAME }}'
-    SERVICE_NAME: '${{ env.SERVICE_NAME }}'
-    CI_BUILD: 'css:build'
-  secrets:
-    SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
-    AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_BLOCKS_CREDENTIALS }}
-    AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_BLOCKS_CONTAINER_REGISTRY }}
-    ClUSTER_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
-    CLUSTER_NAME: ${{ secrets.AKS_BLOCKS_DEV_CLUSTER }}
-    ACR_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
+    permissions:
+      contents: read
+      id-token: write
+    if: ${{ github.event_name == 'push' }}
+    uses: ./.github/workflows/3_web.yml
+    with:
+      CONTAINER_NAME: 'dev-$SERVICE_NAME-webclient'
+      NAMESPACE: 'dev-$REPO_NAME'
+      SERVICE_NAME: $SERVICE_NAME
+      CI_BUILD: 'css:build'
+    secrets:
+      SELISE_GITHUB_PAT: ${{ secrets.SELISE_GITHUB_PAT }}
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_AKS_BLOCKS_CREDENTIALS }}
+      AZURE_CONTAINER_REGISTRY: ${{ secrets.AZURE_BLOCKS_CONTAINER_REGISTRY }}
+      ClUSTER_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
+      CLUSTER_NAME: ${{ secrets.AKS_BLOCKS_DEV_CLUSTER }}
+      ACR_RESOURCE_GROUP: ${{ secrets.ClUSTER_AKS_BLOCKS_RESOURCE_GROUP }}
