@@ -1,0 +1,88 @@
+name: Analyze Code Quality
+
+on: 
+  workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        required: true
+
+jobs:
+  build:
+    name: SonarQube Analysis
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  
+
+    - name: Set Environment Variables
+      uses: ./.github/actions/setvars
+      with:
+        varFilePath: ./.github/variables/vars.env
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3.12.0
+      with:
+        distribution: 'microsoft'
+        java-version: '17'
+    
+    - name: Initialize dotnet
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          2.1.x
+          3.1.x
+          6.0.x
+
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v3.3.1
+      with:
+        path: ~\sonar\cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+    
+    - name: Cache SonarCloud scanner
+      id: cache-sonar-scanner
+      uses: actions/cache@v3.3.1
+      with:
+        path: .\.sonar\scanner
+        key: ${{ runner.os }}-sonar-scanner
+        restore-keys: ${{ runner.os }}-sonar-scanner
+    
+    - name: Install SonarCloud scanner
+      if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+      shell: pwsh
+      run: |
+        dotnet tool install --global dotnet-sonarscanner --version 5.13.0
+    
+    - name: Install coverlet
+      run: |
+        dotnet tool install --global coverlet.console 
+     
+    - name: SonarQube Analysis
+      working-directory: ./SelectNetwork.PackageService
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+      shell: pwsh
+      run: |
+        dotnet-sonarscanner begin /k:"${{ env.SONAR_KEY }}" /o:"${{ env.AUTHOR }}" /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url="${{ env.SONARQUBE_HOST }}" /d:sonar.cs.opencover.reportsPaths=coverage.xml
+
+        dotnet restore "./${{ env.SOLUTION_NAME }}" -s https://www.nuget.org/api/v2/ -s https://nuget.selise.biz/nuget
+
+        dotnet build "./${{ env.SOLUTION_NAME }}" --no-incremental
+
+        dotnet test "./${{ env.SOLUTION_NAME }}" --no-build --verbosity normal --logger "trx;LogFileName=test_results.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+        dotnet-sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
+
+
+    - name: SonarQube Quality Gate check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time.
+      timeout-minutes: 5
+      with:
+        scanMetadataReportFile: SelectNetwork.PackageService/.sonarqube/out/.sonar/report-task.txt
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ env.SONARQUBE_HOST }}
