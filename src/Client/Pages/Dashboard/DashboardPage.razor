@@ -1,0 +1,36 @@
+﻿@page "/"
+
+@rendermode InteractiveAuto
+@inject LanguageState Lang
+@implements IDisposable
+
+<PageTitle>@Tr("DASHBOARD_PAGE_TITLE", "Dashboard — Blocks Platform")</PageTitle>
+<RequireClientAuth />
+
+<div class="mx-auto mt-10 max-w-3xl bg-white p-10">
+    <h1 class="text-3xl font-bold tracking-tight text-slate-900">@Tr("WELCOME", "Welcome")</h1>
+    <p class="mt-4 text-lg text-slate-600">@Tr("WELCOME_NOTE", "Welcome to your dashboard.")</p>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        Lang.OnChange += HandleLanguageChanged;
+    }
+
+    private string Tr(string key, string fallback)
+    {
+        var value = Lang[key];
+        return string.Equals(value, key, StringComparison.OrdinalIgnoreCase) ? fallback : value;
+    }
+
+    private void HandleLanguageChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Lang.OnChange -= HandleLanguageChanged;
+    }
+}

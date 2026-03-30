@@ -92,7 +92,7 @@
         var token = await AuthService.GetAccessTokenAsync();
         if (!string.IsNullOrEmpty(token))
         {
-            Nav.NavigateTo("/identity-management", replace: true);
+            Nav.NavigateTo("/", replace: true);
             return;
         }
 
@@ -116,7 +116,7 @@
             }
 
             AuthState.NotifyAuthStateChanged();
-            Nav.NavigateTo("/identity-management", replace: true);
+            Nav.NavigateTo("/", replace: true);
         }
         catch
         {
