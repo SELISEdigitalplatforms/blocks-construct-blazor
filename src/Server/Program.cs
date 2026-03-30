@@ -53,7 +53,7 @@ builder.Services
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, AppAuthStateProvider>();
 builder.Services.AddScoped<AppAuthStateProvider>();
-builder.Services.AddSingleton<SidebarState>();
+builder.Services.AddScoped<SidebarState>();
 builder.Services.AddScoped<LanguageState>();
 builder.Services.AddTransient<AuthTokenHandler>();
 
