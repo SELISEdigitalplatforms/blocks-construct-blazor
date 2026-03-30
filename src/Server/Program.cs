@@ -4,7 +4,7 @@ using Client.Services;
 using Client.State;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
-using Server.Components.Layout;
+using Server.Layout;
 using Server.Extensions;
 using System.Threading.RateLimiting;
 
