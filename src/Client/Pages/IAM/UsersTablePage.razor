@@ -97,7 +97,7 @@
                 <span>Showing @(Math.Min(_page * _pageSize + 1, _totalCount))–@(Math.Min((_page + 1) * _pageSize, _totalCount)) of @_totalCount</span>
                 <div class="flex gap-2">
                     <button class="rounded-md border px-3 py-1 text-sm disabled:opacity-40 hover:bg-muted" @onclick="PrevPage" disabled="@(_page == 0)">← Previous</button>
-                    <span class="self-center px-1">Page @(_page + 1)</span>
+                    <span class="self-center px-1">Page @_page</span>
                     <button class="rounded-md border px-3 py-1 text-sm disabled:opacity-40 hover:bg-muted" @onclick="NextPage" disabled="@((_page + 1) * _pageSize >= _totalCount)">Next →</button>
                 </div>
             </div>
