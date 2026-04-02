@@ -33,6 +33,18 @@
     @* Right login form panel *@
     <div class="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-900 px-6 py-12 sm:px-12 transition-colors duration-300">
         <div class="w-full max-w-md">
+            @if (_ssoCompleting)
+            {
+                <div class="flex flex-col items-center justify-center gap-6 py-16">
+                    <svg class="h-10 w-10 animate-spin text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Completing sign in...</p>
+                </div>
+            }
+            else
+            {
             @* Mobile logo *@
             <div class="flex items-center gap-2 mb-10 lg:hidden">
                 <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
@@ -127,19 +139,37 @@
             <p class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
                 @T("DONT_HAVE_ACCOUNT") <a href="/signup" class="font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition">@T("SIGN_UP")</a>
             </p>
+            }
         </div>
     </div>
 </div>
 
 @code {
+    [SupplyParameterFromQuery(Name = "code")]
+    private string? Code { get; set; }
+
+    [SupplyParameterFromQuery(Name = "state")]
+    private string? State { get; set; }
+
     private SignInRequest _model        = new();
     private string        _errorMessage = "";
     private bool          _isLoading;
     private LoginOptions? _loginOptions = null;
+    private bool          _ssoCompleting;
+    private string?       _lastProcessedOAuthCode;
 
     protected override void OnInitialized()
     {
         Lang.OnChange += HandleLanguageChanged;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrEmpty(Code))
+            _lastProcessedOAuthCode = null;
+
+        _ssoCompleting = !string.IsNullOrEmpty(Code)
+            && !string.Equals(Code, _lastProcessedOAuthCode, StringComparison.Ordinal);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -151,6 +181,39 @@
         {
             Nav.NavigateTo("/identity-management", replace: true);
             return;
+        }
+
+        if (!string.IsNullOrEmpty(Code))
+        {
+            _errorMessage = "";
+            try
+            {
+                var result = await SsoService.ExchangeSocialCodeAsync(Code, State ?? "");
+
+                if (result.EnableMfa)
+                {
+                    Nav.NavigateTo(
+                        $"/verify-mfa?mfa_id={Uri.EscapeDataString(result.MfaId)}" +
+                        $"&mfa_type={Uri.EscapeDataString(result.MfaType)}" +
+                        "&sso=true",
+                        replace: true);
+                    return;
+                }
+
+                Nav.NavigateTo("/identity-management", replace: true);
+                return;
+            }
+            catch (Exception ex)
+            {
+                _errorMessage = ex.Message.Contains("401", StringComparison.Ordinal) || ex.Message.Contains("400", StringComparison.Ordinal)
+                    ? Tr("SSO_LINK_EXPIRED", "The sign-in link has expired or is invalid. Please try again.")
+                    : Tr("SSO_UNEXPECTED_ERROR", "An unexpected error occurred. Please try again.");
+            }
+            finally
+            {
+                _lastProcessedOAuthCode = Code;
+                _ssoCompleting = false;
+            }
         }
 
         _loginOptions = await SsoService.GetLoginOptionsAsync();
