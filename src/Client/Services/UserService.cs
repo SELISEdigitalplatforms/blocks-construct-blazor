@@ -25,7 +25,7 @@ public class UserService(HttpClient http, RuntimeClientConfig runtimeConfig) : I
     {
         var body = new
         {
-            page = page + 1,
+            page,
             pageSize,
             sort = new { property = "createdDate", isDescending = true },
             filter = new { email = email ?? "", name = name ?? "" },
