@@ -26,6 +26,8 @@
 
         <div class="grid grid-cols-2 gap-4 text-sm">
             <DrawerField Label="@T("PHONE_NO")" Value="@(User.PhoneNumber ?? "-")" />
+            <DrawerField Label="@Tr("DEPARTMENT", "Department")" Value="@(User.Department ?? "-")" />
+            <DrawerField Label="@Tr("EMPLOYEE_ID", "Employee ID")" Value="@(User.EmployeeId ?? "-")" />
             <DrawerField Label="@T("ROLES")" Value="@string.Join(", ", User.Roles)" />
             <DrawerField Label="@T("STATUS")" Value="@(User.Active ? T("ACTIVE") : T("INACTIVE"))" />
             <DrawerField Label="@T("MFA")" Value="@(User.MfaEnabled ? T("ENABLED") : T("DISABLED"))" />
