@@ -404,3 +404,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 .env
+/.claude

@@ -56,8 +56,10 @@
             </div>
 
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Sign in to your account</h2>
-                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Enter your credentials to access the platform.</p>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">@T("LOG_IN")</h2>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        @T("DONT_HAVE_ACCOUNT") <a href="/signup" class="font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition">@T("SIGN_UP")</a>
+                    </p>
             </div>
 
             @if (!string.IsNullOrEmpty(_errorMessage))
@@ -135,10 +137,6 @@
             {
                 <SsoButtons LoginOptions="_loginOptions" />
             }
-
-            <p class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                @T("DONT_HAVE_ACCOUNT") <a href="/signup" class="font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-500 dark:hover:text-primary-300 transition">@T("SIGN_UP")</a>
-            </p>
             }
         </div>
     </div>
@@ -175,6 +173,8 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
+
+        await Lang.InitializeAsync();
 
         var token = await AuthService.GetAccessTokenAsync();
         if (!string.IsNullOrEmpty(token))

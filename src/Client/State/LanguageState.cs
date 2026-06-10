@@ -19,6 +19,7 @@ public sealed class LanguageState(
     private readonly Dictionary<string, HashSet<string>> _moduleCache = new(StringComparer.OrdinalIgnoreCase);
     private List<LanguageModule> _availableModules = [];
     private bool _initialized;
+    private Task? _initTask;
 
     public event Action? OnChange;
 
@@ -42,12 +43,16 @@ public sealed class LanguageState(
     public string this[string key]
         => _translations.TryGetValue(key, out var value) ? value : key;
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
+    {
+        _initTask ??= RunInitializationAsync();
+        return _initTask;
+    }
+
+    private async Task RunInitializationAsync()
     {
         if (_initialized)
-        {
             return;
-        }
 
         IsLoading = true;
         NotifyStateChanged();
