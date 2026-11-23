@@ -1,0 +1,3 @@
+type: changed
+breaking: false
+summary: "The Server and Worker images now have a HEALTHCHECK (pgrep -x dotnet, a process-alive check; the Server has no health endpoint)."
