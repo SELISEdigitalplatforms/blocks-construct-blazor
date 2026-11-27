@@ -35,4 +35,8 @@ EXPOSE 8080
 # X_BLOCKS_KEY
 # PROJECT_SLUG
 
+# Process-alive check: the Server has no health endpoint (PCR-0038), so this proves only that dotnet runs.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD pgrep -x dotnet >/dev/null || exit 1
+
 ENTRYPOINT ["dotnet", "Server.dll"]
